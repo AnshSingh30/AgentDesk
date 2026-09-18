@@ -1,0 +1,98 @@
+{
+ "template": "hr_onboarding",
+ "model": "fake/chat",
+ "cases": 8,
+ "route_accuracy": 0.875,
+ "fact_accuracy": 0.0,
+ "run_at": "2026-09-16T17:19:16.366069+00:00",
+ "results": [
+  {
+   "question": "How many casual leaves do I get per year?",
+   "route": [
+    "rag"
+   ],
+   "route_ok": true,
+   "facts_ok": false,
+   "no_answer_ok": null,
+   "error": null,
+   "latency_ms": 11
+  },
+  {
+   "question": "Can casual leave be carried forward?",
+   "route": [
+    "rag"
+   ],
+   "route_ok": true,
+   "facts_ok": false,
+   "no_answer_ok": null,
+   "error": null,
+   "latency_ms": 7
+  },
+  {
+   "question": "What is the notice period for employees?",
+   "route": [
+    "rag"
+   ],
+   "route_ok": true,
+   "facts_ok": false,
+   "no_answer_ok": null,
+   "error": null,
+   "latency_ms": 6
+  },
+  {
+   "question": "How many days a week can I work from home?",
+   "route": [
+    "rag"
+   ],
+   "route_ok": true,
+   "facts_ok": false,
+   "no_answer_ok": null,
+   "error": null,
+   "latency_ms": 6
+  },
+  {
+   "question": "Is 2 October a holiday?",
+   "route": [
+    "rag"
+   ],
+   "route_ok": true,
+   "facts_ok": false,
+   "no_answer_ok": null,
+   "error": null,
+   "latency_ms": 7
+  },
+  {
+   "question": "What's the health insurance cover amount?",
+   "route": [
+    "rag"
+   ],
+   "route_ok": true,
+   "facts_ok": false,
+   "no_answer_ok": null,
+   "error": null,
+   "latency_ms": 7
+  },
+  {
+   "question": "Who do I contact for laptop issues?",
+   "route": [
+    "rag"
+   ],
+   "route_ok": true,
+   "facts_ok": false,
+   "no_answer_ok": null,
+   "error": null,
+   "latency_ms": 7
+  },
+  {
+   "question": "What's the capital of France?",
+   "route": [
+    "rag"
+   ],
+   "route_ok": false,
+   "facts_ok": null,
+   "no_answer_ok": true,
+   "error": null,
+   "latency_ms": 7
+  }
+ ]
+}

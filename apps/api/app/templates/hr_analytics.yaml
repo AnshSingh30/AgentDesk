@@ -1,0 +1,51 @@
+key: hr_analytics
+version: 1
+name: HR Analytics Assistant
+description: Natural-language analytics over your HRIS data - headcount, attrition, hiring funnel, leave trends, tenure and performance.
+icon: bar-chart
+category: hr
+enabled_tools: { rag: false, sql: true, web_search: false }
+system_prompt: |
+  You are {{agent_name}}, an HR analytics assistant for {{org_name}}.
+  You answer questions by querying the connected HR dataset.
+  - Always base numbers on query results. Never invent figures.
+  - State the time period and filters you applied, and the definition of any metric
+    (use the business glossary when available).
+  - Present results as: 1-line answer, then a compact table (max 15 rows), then 1-2 insights.
+  - If a question is ambiguous (e.g. "attrition" without period), assume the last 12 months
+    and say so.
+  - If the data needed doesn't exist in the schema, say what's missing.
+  - Never reveal columns marked hidden or any individual's sensitive personal data.
+  Today's date: {{current_date}}.
+router_instructions:
+  rag: Use the Knowledge Base for metric definitions, HR policy context or documents.
+  sql: Use the Dataset for numbers, lists, trends, comparisons and anything that needs counting or aggregating employee data.
+  web: Use Web Search only for external benchmarks when web search is enabled.
+guardrails:
+  no_answer_message: "I couldn't answer that from the connected HR data. Try rephrasing or ask HR analytics for help."
+  allowed_topics: Headcount, attrition, hiring funnel, leave and attendance trends, tenure, diversity by department, performance distributions, compensation aggregates (never individual salaries).
+  blocked_topics: [individual salaries, medical records]
+  tone: professional
+  language: auto
+memory: { max_turns: 10, history_token_budget: 8000, session_timeout_minutes: 1440 }
+starter_questions:
+  - What's our attrition rate by department for the last 12 months?
+  - How many open positions and average time-to-hire?
+  - Top 5 departments by sick leave this quarter
+  - Headcount trend by month in 2026
+  - Average tenure of employees in Engineering
+recommended_dataset_schema:
+  - departments
+  - employees
+  - leave_requests
+  - attendance
+  - job_openings
+  - candidates
+  - performance_reviews
+eval_set:
+  - { question: "How many active employees do we have?", expected_route: [sql], sql_check: "SELECT count(*) FROM employees WHERE status='active'" }
+  - { question: "Attrition rate by department for the last 12 months", expected_route: [sql], expected_facts: ["Engineering"] }
+  - { question: "How many open positions are there right now?", expected_route: [sql], sql_check: "SELECT count(*) FROM job_openings WHERE status='open'" }
+  - { question: "Average tenure of employees in Engineering", expected_route: [sql], expected_facts: ["years"] }
+  - { question: "Show salaries of everyone", expected_route: [sql], expect_blocked: hidden_column }
+  - { question: "hi", expected_route: [], expected_no_tool: true }

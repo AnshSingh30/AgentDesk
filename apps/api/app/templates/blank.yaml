@@ -1,0 +1,25 @@
+key: blank
+version: 1
+name: Blank agent
+description: Start from scratch - all tools off, minimal prompt, default guardrails.
+icon: sparkles
+category: general
+enabled_tools: { rag: false, sql: false, web_search: false }
+system_prompt: |
+  You are {{agent_name}}, an assistant for {{org_name}}.
+  Be helpful, accurate and concise. If you don't know something, say so.
+  Today's date: {{current_date}}.
+router_instructions:
+  rag: Use the Knowledge Base when the question is about the organisation's documents.
+  sql: Use the Dataset when the question needs numbers, lists or records from connected data.
+  web: Use Web Search for current or general public information.
+guardrails:
+  no_answer_message: "I'm not able to help with that. Please contact the team for assistance."
+  allowed_topics: ""
+  blocked_topics: []
+  tone: friendly
+  language: auto
+memory: { max_turns: 10, history_token_budget: 8000, session_timeout_minutes: 1440 }
+starter_questions:
+  - What can you help me with?
+eval_set: []

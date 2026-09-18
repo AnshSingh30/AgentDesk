@@ -1,0 +1,28 @@
+# env / secrets
+.env
+.env.*
+!.env.example
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+# node
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+.pnpm-store/
+# data
+*.duckdb
+data/
+infra/compose/volumes/
+# misc
+.DS_Store
+*.log
+playwright-report/
+test-results/

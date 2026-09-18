@@ -1,0 +1,23 @@
+{
+  "app": {
+    "name": "AgentDesk",
+    "tagline": "No-code AI agents for your documents and data, deployed on WhatsApp"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "agents": "Agents",
+    "knowledge": "Knowledge",
+    "datasets": "Datasets",
+    "conversations": "Conversations",
+    "analytics": "Analytics",
+    "settings": "Settings"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "loading": "Loading…",
+    "saved": "Saved",
+    "error": "Something went wrong"
+  }
+}

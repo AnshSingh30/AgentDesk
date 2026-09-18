@@ -1,0 +1,36 @@
+name: Nightly evals
+on:
+  schedule: [{ cron: "30 1 * * *" }]
+  workflow_dispatch:
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    services:
+      postgres: { image: postgres:16, env: { POSTGRES_USER: agentdesk, POSTGRES_PASSWORD: agentdesk, POSTGRES_DB: agentdesk }, ports: ["5433:5432"] }
+      hrdemo: { image: postgres:16, env: { POSTGRES_USER: hr_demo, POSTGRES_PASSWORD: hr_demo, POSTGRES_DB: hr_demo }, ports: ["5434:5432"] }
+      redis: { image: redis:7, ports: ["6379:6379"] }
+      qdrant: { image: qdrant/qdrant:v1.19.1, ports: ["6333:6333"] }
+      minio: { image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z, env: { MINIO_ROOT_USER: minioadmin, MINIO_ROOT_PASSWORD: minioadmin }, ports: ["9000:9000"] }
+    env:
+      DATABASE_URL: postgresql+asyncpg://agentdesk:agentdesk@localhost:5433/agentdesk
+      HR_DEMO_DATABASE_URL: postgresql://hr_demo:hr_demo@localhost:5434/hr_demo
+      REDIS_URL: redis://localhost:6379/0
+      QDRANT_URL: http://localhost:6333
+      S3_ENDPOINT: http://localhost:9000
+      ALLOW_PRIVATE_ENDPOINTS: "true"
+      DEFAULT_CHAT_MODEL: ${{ vars.EVAL_CHAT_MODEL || 'fake/chat' }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      LANGSMITH_API_KEY: ${{ secrets.LANGSMITH_API_KEY }}
+      LANGSMITH_TRACING: "true"
+      LANGSMITH_PROJECT: agentdesk-evals
+    defaults: { run: { working-directory: apps/api } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv python install 3.12 && uv sync --python 3.12
+      - run: uv run alembic upgrade head && uv run python ../../infra/scripts/seed_demo.py
+      - run: uv run pytest -q tests/evals -s --junitxml=evals.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: eval-results, path: apps/api/evals.xml }

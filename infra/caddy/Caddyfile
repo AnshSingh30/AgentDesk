@@ -1,0 +1,32 @@
+# Production reverse proxy: TLS (auto-HTTPS), gzip, security headers, routing (PRD §8.1, §18.3).
+# Set APP_DOMAIN (e.g. app.example.com) and HOOKS_DOMAIN in the compose environment.
+{$APP_DOMAIN:localhost} {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Frame-Options DENY
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+		-Server
+	}
+	# API is served under /api/* (the SPA calls NEXT_PUBLIC_API_URL=/api) and the prefix is stripped
+	handle_path /api/* {
+		reverse_proxy api:8000 {
+			header_up X-Request-ID {http.request.uuid}
+			flush_interval -1
+		}
+	}
+	handle /webhooks/* {
+		reverse_proxy webhook:8001
+	}
+	handle {
+		reverse_proxy web:3000
+	}
+}
+
+{$HOOKS_DOMAIN:hooks.localhost} {
+	encode gzip
+	reverse_proxy webhook:8001
+}

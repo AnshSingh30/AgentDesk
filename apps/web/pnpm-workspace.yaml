@@ -1,0 +1,7 @@
+minimumReleaseAgeExclude:
+  - "@tanstack/query-core@5.103.1"
+  - "@tanstack/react-query@5.103.1"
+  - prettier@3.9.7
+# pnpm 11: dependencies allowed to run install scripts (unrs-resolver installs its native binding for eslint)
+allowBuilds:
+  unrs-resolver: true

@@ -1,0 +1,52 @@
+# Model catalogue (PRD §12). Edit without code changes. `id` is the provider-native model id.
+providers:
+  openai:
+    display: OpenAI
+    key_env: OPENAI_API_KEY
+    models:
+      - { id: gpt-5, display: GPT-5, context: 400000, supports_tools: true, supports_json_schema: true }
+      - { id: gpt-5-mini, display: GPT-5 mini, context: 400000, supports_tools: true, supports_json_schema: true, default: true }
+      - { id: gpt-4.1, display: GPT-4.1, context: 1047576, supports_tools: true, supports_json_schema: true }
+      - { id: gpt-4.1-mini, display: GPT-4.1 mini, context: 1047576, supports_tools: true, supports_json_schema: true }
+      - { id: gpt-4o-mini, display: GPT-4o mini, context: 128000, supports_tools: true, supports_json_schema: true }
+  anthropic:
+    display: Anthropic
+    key_env: ANTHROPIC_API_KEY
+    models:
+      - { id: claude-fable-5-1, display: Claude Fable 5.1, context: 200000, supports_tools: true, supports_json_schema: true }
+      - { id: claude-opus-5, display: Claude Opus 5, context: 200000, supports_tools: true, supports_json_schema: true }
+      - { id: claude-sonnet-5, display: Claude Sonnet 5, context: 200000, supports_tools: true, supports_json_schema: true, default: true }
+      - { id: claude-haiku-4-5-20251001, display: Claude Haiku 4.5, context: 200000, supports_tools: true, supports_json_schema: true }
+  gemini:
+    display: Google Gemini
+    key_env: GEMINI_API_KEY
+    models:
+      - { id: gemini-2.5-pro, display: Gemini 2.5 Pro, context: 1048576, supports_tools: true, supports_json_schema: true }
+      - { id: gemini-2.5-flash, display: Gemini 2.5 Flash, context: 1048576, supports_tools: true, supports_json_schema: true, default: true }
+  groq:
+    display: Groq
+    key_env: GROQ_API_KEY
+    models:
+      - { id: llama-3.3-70b-versatile, display: Llama 3.3 70B, context: 131072, supports_tools: true, supports_json_schema: false, default: true }
+      - { id: llama-3.1-8b-instant, display: Llama 3.1 8B, context: 131072, supports_tools: true, supports_json_schema: false }
+  openrouter:
+    display: OpenRouter
+    key_env: OPENROUTER_API_KEY
+    models:
+      - { id: openai/gpt-4o-mini, display: GPT-4o mini (OpenRouter), context: 128000, supports_tools: true, supports_json_schema: true, default: true }
+      - { id: anthropic/claude-sonnet-5, display: Claude Sonnet 5 (OpenRouter), context: 200000, supports_tools: true, supports_json_schema: true }
+      - { id: meta-llama/llama-3.3-70b-instruct, display: Llama 3.3 70B (OpenRouter), context: 131072, supports_tools: true, supports_json_schema: false }
+  custom:
+    display: Custom OpenAI-compatible endpoint
+    key_env: null
+    models: []   # user supplies model name (vLLM, Ollama, LM Studio, Azure OpenAI)
+  fake:
+    display: Demo (no API key)
+    key_env: null
+    models:
+      - { id: chat, display: Demo model, context: 32000, supports_tools: true, supports_json_schema: true, default: true }
+
+embedding_models:
+  - { id: fastembed/BAAI/bge-small-en-v1.5, display: "bge-small-en (local, 384d)", dim: 384, provider: local }
+  - { id: text-embedding-3-small, display: "OpenAI text-embedding-3-small (1536d)", dim: 1536, provider: openai }
+  - { id: text-embedding-3-large, display: "OpenAI text-embedding-3-large (3072d)", dim: 3072, provider: openai }

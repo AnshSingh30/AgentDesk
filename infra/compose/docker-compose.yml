@@ -1,0 +1,204 @@
+name: agentdesk
+
+x-app-env: &app-env
+  APP_ENV: ${APP_ENV:-local}
+  DATABASE_URL: postgresql+asyncpg://agentdesk:${POSTGRES_PASSWORD:-agentdesk}@postgres:5432/agentdesk
+  REDIS_URL: redis://redis:6379/0
+  QDRANT_URL: http://qdrant:6333
+  S3_ENDPOINT: http://minio:9000
+  S3_PUBLIC_ENDPOINT: ${S3_PUBLIC_ENDPOINT:-http://localhost:9000}
+  S3_BUCKET: agentdesk
+  S3_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+  S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
+  SMTP_HOST: mailpit
+  SMTP_PORT: "1025"
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: agentdesk
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-agentdesk}
+      POSTGRES_DB: agentdesk
+    ports: ["${POSTGRES_PORT:-5433}:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agentdesk -d agentdesk"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    ports: ["${REDIS_PORT:-6379}:6379"]
+    volumes: [redisdata:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  qdrant:
+    image: qdrant/qdrant:v1.19.1
+    ports: ["${QDRANT_PORT:-6333}:6333", "6334:6334"]
+    volumes: [qdrantdata:/qdrant/storage]
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/6333' || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports: ["${MINIO_PORT:-9000}:9000", "${MINIO_CONSOLE_PORT:-9001}:9001"]
+    volumes: [miniodata:/data]
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:latest
+    profiles: [dev]
+    ports: ["${MAILPIT_UI_PORT:-8025}:8025", "${MAILPIT_SMTP_PORT:-1025}:1025"]
+    restart: unless-stopped
+
+  hr-demo-db:
+    image: postgres:16
+    profiles: [dev]
+    environment:
+      POSTGRES_USER: hr_demo
+      POSTGRES_PASSWORD: hr_demo
+      POSTGRES_DB: hr_demo
+    ports: ["${HR_DEMO_PORT:-5434}:5432"]
+    volumes: [hrdemodata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hr_demo -d hr_demo"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # ---- application services (prod profile; dev runs these natively via `make dev`)
+  migrate:
+    profiles: [prod]
+    build: { context: ../.., dockerfile: infra/docker/api.Dockerfile }
+    command: ["alembic", "upgrade", "head"]
+    environment: *app-env
+    env_file:
+      - path: ../../.env
+        required: false
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  api:
+    profiles: [prod]
+    build: { context: ../.., dockerfile: infra/docker/api.Dockerfile }
+    command: ["gunicorn", "app.main:app", "-k", "uvicorn.workers.UvicornWorker", "-w", "2", "-b", "0.0.0.0:8000", "--timeout", "120"]
+    environment: *app-env
+    env_file:
+      - path: ../../.env
+        required: false
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+      qdrant: { condition: service_healthy }
+      minio: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import urllib.request;urllib.request.urlopen(\"http://127.0.0.1:8000/healthz\")'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    deploy: { resources: { limits: { memory: 1g } } }
+    restart: unless-stopped
+    logging: { driver: json-file, options: { max-size: "20m", max-file: "5" } }
+
+  webhook:
+    profiles: [prod]
+    build: { context: ../.., dockerfile: infra/docker/api.Dockerfile }
+    command: ["gunicorn", "app.webhook_main:app", "-k", "uvicorn.workers.UvicornWorker", "-w", "2", "-b", "0.0.0.0:8001", "--timeout", "30"]
+    environment: *app-env
+    env_file:
+      - path: ../../.env
+        required: false
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+    deploy: { resources: { limits: { memory: 512m } } }
+    restart: unless-stopped
+    logging: { driver: json-file, options: { max-size: "20m", max-file: "5" } }
+
+  worker:
+    profiles: [prod]
+    build: { context: ../.., dockerfile: infra/docker/worker.Dockerfile }
+    command: ["arq", "app.worker.WorkerSettings"]
+    environment: *app-env
+    env_file:
+      - path: ../../.env
+        required: false
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+      qdrant: { condition: service_healthy }
+      minio: { condition: service_healthy }
+    deploy: { resources: { limits: { memory: 2g } } }
+    stop_grace_period: 60s
+    restart: unless-stopped
+    logging: { driver: json-file, options: { max-size: "20m", max-file: "5" } }
+
+  web:
+    profiles: [prod]
+    build:
+      context: ../..
+      dockerfile: infra/docker/web.Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: "${NEXT_PUBLIC_API_URL:-/api}"
+    depends_on: [api]
+    deploy: { resources: { limits: { memory: 512m } } }
+    restart: unless-stopped
+
+  caddy:
+    profiles: [prod]
+    image: caddy:2
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ../caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddydata:/data
+      - caddyconfig:/config
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:-localhost}
+    depends_on: [web, api, webhook]
+    restart: unless-stopped
+
+  backup:
+    profiles: [prod]
+    image: postgres:16
+    entrypoint: ["/bin/sh", "/scripts/backup_cron.sh"]
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD:-agentdesk}
+      S3_ENDPOINT: http://minio:9000
+      S3_BUCKET: agentdesk-backups
+      S3_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes: [../scripts:/scripts:ro]
+    depends_on: [postgres, minio]
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  redisdata:
+  qdrantdata:
+  miniodata:
+  hrdemodata:
+  caddydata:
+  caddyconfig:

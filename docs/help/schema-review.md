@@ -1,0 +1,3 @@
+# Reviewing a dataset schema
+
+After connecting, AgentDesk introspects tables, columns, keys and sample values and drafts descriptions with AI (marked *AI draft*). Review each table: fix descriptions, set semantic types, **hide** sensitive columns (they are removed from prompts and blocked in SQL), un-expose tables the agent should not see, add relationships the database does not declare, define business terms in the glossary and add validated example queries. Mark tables reviewed; the dataset becomes *ready* when every exposed table is reviewed. Re-sync after schema changes; your edits are preserved.

@@ -1,0 +1,86 @@
+[project]
+name = "agentdesk-api"
+version = "0.1.0"
+description = "AgentDesk API, WhatsApp webhook and worker services"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "fastapi>=0.141",
+  "uvicorn[standard]>=0.53",
+  "gunicorn>=23",
+  "pydantic>=2.13",
+  "pydantic-settings>=2.15",
+  "email-validator>=2.3",
+  "sqlalchemy[asyncio]>=2.0.54",
+  "asyncpg>=0.31",
+  "alembic>=1.20",
+  "arq>=0.28",
+  "redis>=5",
+  "qdrant-client>=1.19",
+  "fastembed>=0.8",
+  "litellm>=1.101",
+  "langgraph>=1.2",
+  "langchain-core>=1.6",
+  "sqlglot>=30",
+  "duckdb>=1.5",
+  "pandas>=3.0",
+  "openpyxl>=3.1",
+  "unstructured>=0.27",
+  "pdfminer.six>=20260107",
+  "python-docx>=1.2",
+  "markdown>=3.7",
+  "boto3>=1.43",
+  "argon2-cffi>=25.1",
+  "PyJWT>=2.14",
+  "cryptography>=50",
+  "httpx>=0.28",
+  "structlog>=26",
+  "prometheus-client>=0.26",
+  "python-multipart>=0.0.32",
+  "orjson>=3.12",
+  "pyyaml>=6",
+  "tiktoken>=0.14",
+  "fpdf2>=2.8",
+  "charset-normalizer>=3.5",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=9",
+  "pytest-asyncio>=1.4",
+  "pytest-cov>=7",
+  "ruff>=0.16",
+  "mypy>=1.19",
+  "types-PyYAML",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+src = ["app", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "ASYNC", "S"]
+ignore = ["S101", "S104", "S105", "S106", "S311", "B008", "E501", "UP047", "ASYNC109", "ASYNC240", "S110"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "ASYNC"]
+"app/sql/*" = ["S608", "S108"]
+"app/llm/fake.py" = ["S608"]
+
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+python_version = "3.12"
+ignore_missing_imports = true
+strict = false
+check_untyped_defs = true
+files = ["app/core", "app/sql/validator.py", "app/guardrails", "app/memory"]
