@@ -55,6 +55,10 @@ class Settings(BaseSettings):
     default_chat_model: str = "fake/chat"
     default_utility_model: str = ""
     default_embedding_model: str = "fastembed/BAAI/bge-small-en-v1.5"
+    # Optional OpenAI-compatible base URLs for the platform models (vLLM, Ollama, TEI, LiteLLM proxy...).
+    # Only applied to `openai/...` model strings; the key comes from OPENAI_API_KEY.
+    default_llm_api_base: str | None = None
+    embedding_api_base: str | None = None
     openai_api_key: str | None = None
     anthropic_api_key: str | None = None
     gemini_api_key: str | None = None
