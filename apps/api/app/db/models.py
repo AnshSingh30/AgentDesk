@@ -131,6 +131,18 @@ class AgentApiKey(PKMixin, TimestampMixin, OrgScopedMixin, Base):
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
+class Annotation(PKMixin, TimestampMixin, OrgScopedMixin, Base):
+    """Curated Q&A: a close enough question gets `answer` verbatim, without calling the LLM."""
+
+    __tablename__ = "annotations"
+    agent_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("agents.id", ondelete="CASCADE"), index=True)
+    question: Mapped[str] = mapped_column(Text)
+    answer: Mapped[str] = mapped_column(Text)
+    hit_count: Mapped[int] = mapped_column(Integer, default=0)
+    last_hit_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+
+
 class AuditLog(PKMixin, Base):
     __tablename__ = "audit_logs"
     __table_args__ = (Index("ix_audit_logs_org_created", "org_id", "created_at"),)
@@ -477,7 +489,9 @@ class UsageDaily(Base):
     __tablename__ = "usage_daily"
     org_id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
     date: Mapped[date] = mapped_column(Date, primary_key=True)
-    agent_id: Mapped[uuid.UUID | None] = mapped_column(Uuid, primary_key=True, default=uuid.UUID(int=0))
+    agent_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, primary_key=True, default=uuid.UUID(int=0)
+    )  # nil = org-wide
     kind: Mapped[str] = mapped_column(String(20), primary_key=True)
     model: Mapped[str] = mapped_column(String(120), primary_key=True, default="")
     input_tokens: Mapped[int] = mapped_column(BigInteger, default=0)
@@ -490,6 +504,8 @@ ORG_SCOPED_TABLES = [
     Invitation,
     ProviderCredential,
     Agent,
+    AgentApiKey,
+    Annotation,
     AgentVersion,
     KnowledgeBase,
     Document,

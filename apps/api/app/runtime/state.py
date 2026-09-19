@@ -40,3 +40,4 @@ class AgentState(TypedDict, total=False):
     tool_errors: Annotated[list[dict[str, Any]], operator.add]
     formatted: list[str]
     no_answer: bool
+    annotation: dict[str, Any] | None

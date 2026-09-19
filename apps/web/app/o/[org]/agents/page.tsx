@@ -147,6 +147,9 @@ export default function AgentsPage() {
                       <DropdownMenuItem asChild>
                         <Link href={`${base}/agents/${a.id}/versions`}>Versions</Link>
                       </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href={`${base}/agents/${a.id}/annotations`}>Annotations</Link>
+                      </DropdownMenuItem>
                       {can("editor") ? (
                         <>
                           <DropdownMenuItem onSelect={() => dup.mutate(a.id)}>

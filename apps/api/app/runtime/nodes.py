@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import re
 import time
 from typing import Any
@@ -14,6 +15,7 @@ from pydantic import BaseModel, Field
 from app.guardrails.input import check_input
 from app.guardrails.output import grounding_check, normalise_output
 from app.llm.gateway import LLMError, StreamDone, chat, stream_chat, structured, usage_record
+from app.rag.embeddings import embed_dense
 from app.rag.retrieval import retrieve
 from app.runtime.context import RunContext, ctx_from, emit
 from app.runtime.formatter import format_for_whatsapp
@@ -61,6 +63,40 @@ async def input_guardrails(state: AgentState, config: RunnableConfig) -> dict[st
         "guardrail_events": [{"stage": "input", **e} for e in res.events],
         "usage": usage,
         "timings": {"input_guardrails": round(time.perf_counter() - t0, 4)},
+    }
+
+
+def _cosine(a: list[float], b: list[float]) -> float:
+    dot = sum(x * y for x, y in zip(a, b, strict=True))
+    norm = math.sqrt(sum(x * x for x in a)) * math.sqrt(sum(y * y for y in b))
+    return dot / norm if norm else 0.0
+
+
+async def annotation_reply(state: AgentState, config: RunnableConfig) -> dict[str, Any]:
+    """Answer verbatim from a curated annotation when the question is close enough (no LLM call)."""
+    ctx = ctx_from(config)
+    if not ctx.annotations:
+        return {}
+    t0 = time.perf_counter()
+    try:
+        query = (await embed_dense([state["user_message"]]))[0]
+    except Exception as e:  # noqa: BLE001 - embeddings down: fall through to the normal graph
+        log.warning("annotation_embed_failed", error=str(e)[:200])
+        return {}
+    score, best = max(((_cosine(query, a["vector"]), a) for a in ctx.annotations), key=lambda x: x[0])
+    timings = {"annotation_reply": round(time.perf_counter() - t0, 4)}
+    if score < ctx.cfg.annotations.threshold:
+        return {"timings": timings}
+    route = {"tools": [], "reason": f"annotation reply (similarity {score:.2f})"}
+    emit("route", route)
+    emit("token", {"text": best["answer"]})
+    return {
+        "answer": best["answer"],
+        "annotation": {"id": best["id"], "score": round(score, 4)},
+        "route": route,
+        "citations": [],
+        "no_answer": False,
+        "timings": timings,
     }
 
 

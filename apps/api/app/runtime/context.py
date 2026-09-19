@@ -42,6 +42,7 @@ class RunContext:
     tavily_key: str | None = None
     rerank_key: str | None = None
     confirm_sql: bool = False
+    annotations: list[dict[str, Any]] = field(default_factory=list)  # {id, answer, vector}
     metadata: dict[str, Any] = field(default_factory=dict)
 
     async def check_cancelled(self) -> None:

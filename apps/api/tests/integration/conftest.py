@@ -57,7 +57,8 @@ class Actor:
 
     async def request(self, method: str, path: str, **kw: object) -> httpx.Response:
         await self._refresh_csrf()
-        return await self.client.request(method, path, headers=self._headers(), **kw)  # type: ignore[arg-type]
+        headers = {**self._headers(), **(kw.pop("headers", None) or {})}  # type: ignore[dict-item]
+        return await self.client.request(method, path, headers=headers, **kw)  # type: ignore[arg-type]
 
     async def get(self, path: str, **kw: object) -> httpx.Response:
         return await self.request("GET", path, **kw)

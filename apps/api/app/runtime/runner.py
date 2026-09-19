@@ -13,7 +13,7 @@ from typing import Any
 
 import structlog
 from langgraph.types import Command
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.agents.schemas import AgentConfig
@@ -24,6 +24,7 @@ from app.core.redis import get_redis
 from app.db.models import (
     Agent,
     AgentVersion,
+    Annotation,
     Conversation,
     Dataset,
     KnowledgeBase,
@@ -35,6 +36,7 @@ from app.db.models import (
 from app.db.session import get_sessionmaker
 from app.llm.gateway import LLMError, org_llm_slot, resolve_model
 from app.memory.history import load_history
+from app.rag.embeddings import embed_dense
 from app.runtime.context import RunCancelled, RunContext
 from app.runtime.graph import get_graph
 from app.sql.context import load_dataset_context
@@ -146,6 +148,22 @@ async def prepare_run(
             .all()
         )
         kb_summary = "; ".join(f"{k.name}: {(k.description or '')[:80]} ({k.doc_count} docs)" for k in kbs)
+    annotations: list[dict[str, Any]] = []
+    if cfg.annotations.enabled:
+        # ponytail: linear scan over <=500 curated Q&As per agent; move to Qdrant if agents need more
+        rows = (
+            await session.execute(
+                select(Annotation.id, Annotation.question, Annotation.answer)
+                .where(Annotation.org_id == org.id, Annotation.agent_id == agent.id)
+                .order_by(Annotation.created_at)
+                .limit(500)
+            )
+        ).all()
+        if rows:
+            vectors = await embed_dense([r.question for r in rows])  # Redis-cached per question
+            annotations = [
+                {"id": str(r.id), "answer": r.answer, "vector": v} for r, v in zip(rows, vectors, strict=True)
+            ]
     metadata = {
         "org_id": str(org.id),
         "agent_id": str(agent.id),
@@ -176,6 +194,7 @@ async def prepare_run(
         tavily_key=await _credential_key(session, org.id, "tavily"),
         rerank_key=await _credential_key(session, org.id, "cohere"),
         confirm_sql=confirm_sql and channel == "playground",
+        annotations=annotations,
         metadata=metadata,
     )
 
@@ -343,6 +362,12 @@ async def persist_run(
     agent_runs_total.labels("+".join(route) or "none", ctx.channel, "error" if error else "ok").inc()
     agent_run_duration.labels(ctx.channel).observe(latency_ms / 1000)
     async with get_sessionmaker()() as session:
+        if state.get("annotation"):
+            await session.execute(
+                update(Annotation)
+                .where(Annotation.id == uuid.UUID(state["annotation"]["id"]), Annotation.org_id == ctx.org_id)
+                .values(hit_count=Annotation.hit_count + 1, last_hit_at=datetime.now(UTC))
+            )
         conv = await session.get(Conversation, ctx.conversation_id)
         answer = state.get("answer") or (
             "" if error is None else "I'm having trouble right now, please try again in a minute."

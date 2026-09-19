@@ -69,6 +69,7 @@ def create_app(*, include_webhooks: bool = True) -> FastAPI:
     from app.admin.router import router as admin_router
     from app.agents.router import router as agents_router
     from app.analytics.router import router as analytics_router
+    from app.annotations.router import router as annotations_router
     from app.auth.router import router as auth_router
     from app.conversations.router import router as conversations_router
     from app.datasets.router import router as datasets_router
@@ -94,6 +95,7 @@ def create_app(*, include_webhooks: bool = True) -> FastAPI:
         admin_router,
         jobs_router,
         service_api_router,
+        annotations_router,
     ):
         app.include_router(r, prefix="/v1")
     if include_webhooks:

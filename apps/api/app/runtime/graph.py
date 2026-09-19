@@ -19,7 +19,11 @@ _checkpointer = MemorySaver()
 
 
 def _after_guardrails(state: AgentState) -> str:
-    return "blocked_response" if state.get("blocked") else "query_rewrite"
+    return "blocked_response" if state.get("blocked") else "annotation_reply"
+
+
+def _after_annotation(state: AgentState) -> str:
+    return "channel_formatter" if state.get("annotation") else "query_rewrite"
 
 
 @lru_cache
@@ -27,6 +31,7 @@ def get_graph() -> Any:
     g = StateGraph(AgentState)
     g.add_node("input_guardrails", nodes.input_guardrails)
     g.add_node("blocked_response", nodes.blocked_response)
+    g.add_node("annotation_reply", nodes.annotation_reply)
     g.add_node("query_rewrite", nodes.query_rewrite)
     g.add_node("router", nodes.router)
     g.add_node("rag_retrieve", nodes.rag_retrieve)
@@ -40,7 +45,12 @@ def get_graph() -> Any:
     g.add_conditional_edges(
         "input_guardrails",
         _after_guardrails,
-        {"blocked_response": "blocked_response", "query_rewrite": "query_rewrite"},
+        {"blocked_response": "blocked_response", "annotation_reply": "annotation_reply"},
+    )
+    g.add_conditional_edges(
+        "annotation_reply",
+        _after_annotation,
+        {"channel_formatter": "channel_formatter", "query_rewrite": "query_rewrite"},
     )
     g.add_edge("blocked_response", "channel_formatter")
     g.add_edge("query_rewrite", "router")
