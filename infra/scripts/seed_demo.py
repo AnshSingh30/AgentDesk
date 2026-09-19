@@ -273,7 +273,8 @@ SAMPLE_QA = {
 
 
 async def reset_demo(session: object) -> None:
-    for email in ("demo@agentdesk.local", "admin@agentdesk.local"):
+    # the *.local addresses are from older seeds (rejected by email validation at login)
+    for email in ("demo@example.com", "admin@example.com", "demo@agentdesk.local", "admin@agentdesk.local"):
         user = (await session.execute(select(User).where(User.email == email))).scalar_one_or_none()
         if user is None:
             continue
@@ -336,14 +337,14 @@ async def main() -> None:
         await sync_templates(session)
         await reset_demo(session)
         admin = User(
-            email="admin@agentdesk.local",
+            email="admin@example.com",
             password_hash=hash_password(ADMIN_PASSWORD),
             name="Platform Admin",
             is_superadmin=True,
             email_verified_at=datetime.now(UTC),
         )
         demo = User(
-            email="demo@agentdesk.local",
+            email="demo@example.com",
             password_hash=hash_password(DEMO_PASSWORD),
             name="Simar (Demo)",
             email_verified_at=datetime.now(UTC),
@@ -609,9 +610,9 @@ async def main() -> None:
         await session.execute(delete(Message).where(Message.content == "__never__"))
     print("\nSeed complete.")
     print(
-        f"  Demo owner:  demo@agentdesk.local / {DEMO_PASSWORD}  (orgs: Northwind Tech, Greenwood Public School)"
+        f"  Demo owner:  demo@example.com / {DEMO_PASSWORD}  (orgs: Northwind Tech, Greenwood Public School)"
     )
-    print(f"  Superadmin:  admin@agentdesk.local / {ADMIN_PASSWORD}")
+    print(f"  Superadmin:  admin@example.com / {ADMIN_PASSWORD}")
     print(
         f"  Documents:   {len(docs['northwind'])} Northwind + {len(docs['greenwood'])} Greenwood files in demo/"
     )

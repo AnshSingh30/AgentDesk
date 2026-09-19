@@ -190,7 +190,7 @@ async def seeded_agent(template_key: str) -> tuple[Organization, Agent, User] | 
             return None
         org = await session.get(Organization, agent.org_id)
         user = (
-            await session.execute(select(User).where(User.email == "demo@agentdesk.local"))
+            await session.execute(select(User).where(User.email == "demo@example.com"))
         ).scalar_one_or_none()
         return (org, agent, user) if org and user else None
 

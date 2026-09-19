@@ -90,7 +90,7 @@ make dev         # infra in Docker; API :8000, webhook :8001, worker and web :30
 make seed        # (new terminal) demo orgs, 3 agents, ingested documents, HR dataset, sample conversations
 ```
 
-Open http://localhost:3000 and sign in as `demo@agentdesk.local` / `Demo-password-123!`. Verification
+Open http://localhost:3000 and sign in as `demo@example.com` / `Demo-password-123!`. Verification
 and invitation emails land in Mailpit at http://localhost:8025.
 
 Out of the box the agents use `fake/chat`, a deterministic demo model: routing, retrieval, SQL and
