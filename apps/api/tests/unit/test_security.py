@@ -90,3 +90,10 @@ def test_master_key_validation() -> None:
             encryption_master_keys=good,
             s3_secret_key="minioadmin",
         ).master_keys
+
+
+def test_quote_ident_escapes_embedded_quotes() -> None:
+    from app.sql.introspect import quote_ident
+
+    assert quote_ident("orders") == '"orders"'
+    assert quote_ident('x"; DROP TABLE t; --') == '"x""; DROP TABLE t; --"'

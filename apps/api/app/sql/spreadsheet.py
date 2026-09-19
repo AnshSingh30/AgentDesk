@@ -296,7 +296,8 @@ def build_duckdb(data: bytes, filename: str, plan: dict[str, Any], out_path: str
             if frame.empty:
                 continue
             con.register("frame_df", frame)
-            con.execute(f'CREATE OR REPLACE TABLE "{table}" AS SELECT * FROM frame_df')
+            # table comes from sanitize_table ([a-z0-9_] only)
+            con.execute(f'CREATE OR REPLACE TABLE "{table}" AS SELECT * FROM frame_df')  # nosec B608
             con.unregister("frame_df")
             report["tables"].append(
                 {

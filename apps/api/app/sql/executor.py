@@ -7,6 +7,7 @@ import datetime as dt
 import decimal
 import json
 import os
+import tempfile
 import threading
 import time
 import uuid
@@ -29,7 +30,7 @@ MAX_BYTES = 64 * 1024
 STATEMENT_TIMEOUT_S = 15
 _pools: dict[str, asyncpg.Pool] = {}
 _pool_lock = asyncio.Lock()
-DUCK_CACHE_DIR = os.path.join(os.environ.get("TMPDIR", "/tmp"), "agentdesk-duckdb")
+DUCK_CACHE_DIR = os.path.join(tempfile.gettempdir(), "agentdesk-duckdb")
 
 
 @dataclass

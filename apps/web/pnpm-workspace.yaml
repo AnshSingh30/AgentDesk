@@ -5,3 +5,6 @@ minimumReleaseAgeExclude:
 # pnpm 11: dependencies allowed to run install scripts (unrs-resolver installs its native binding for eslint)
 allowBuilds:
   unrs-resolver: true
+# security: next bundles an old postcss (GHSA-r28c-9q8g-f849 and older advisory)
+overrides:
+  postcss: ">=8.5.18"

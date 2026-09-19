@@ -52,7 +52,7 @@ jobs:
       - name: Unit + integration tests
         run: uv run pytest -q --cov=app --cov-report=term-missing --cov-fail-under=60
       - name: Security scans
-        run: uv run pip install bandit pip-audit >/dev/null && uv run bandit -q -r app -ll && uv run pip-audit --strict || true
+        run: uvx bandit -q -r app -ll && (uvx pip-audit || true)
   frontend:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: apps/web } }

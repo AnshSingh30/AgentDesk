@@ -16,6 +16,12 @@ from app.core.crypto import decrypt_secret
 from app.db.models import Dataset, DatasetColumn, DatasetRelationship, DatasetSchemaVersion, DatasetTable
 from app.sql.executor import duckdb_local_path, pg_connect
 
+
+def quote_ident(name: str) -> str:
+    """Quote an identifier read from a customer catalog (embedded quotes are doubled)."""
+    return '"' + name.replace('"', '""') + '"'
+
+
 log = structlog.get_logger()
 SENSITIVE_NAME = re.compile(
     r"(password|passwd|token|secret|ssn|aadhaar|aadhar|pan_no|pan_number|\bpan\b|salary|dob|date_of_birth|birth|phone|mobile|email|iban|account_no|card)",
@@ -177,10 +183,8 @@ async def introspect_postgres(
 
 
 async def _pg_sample(conn: Any, schema: str, table: str, column: str) -> list[Any] | None:
-    q = (
-        f'SELECT DISTINCT "{column}" FROM (SELECT "{column}" FROM "{schema}"."{table}" WHERE "{column}" IS NOT NULL LIMIT 2000) s '
-        f"ORDER BY 1 LIMIT 5"
-    )
+    c, t = quote_ident(column), f"{quote_ident(schema)}.{quote_ident(table)}"
+    q = f"SELECT DISTINCT {c} FROM (SELECT {c} FROM {t} WHERE {c} IS NOT NULL LIMIT 2000) s ORDER BY 1 LIMIT 5"  # nosec B608 (quote_ident)
     try:
         await conn.execute("SET statement_timeout = '5s'")
         rows = await conn.fetch(q)
@@ -239,9 +243,10 @@ def _duckdb_snapshot(path: str, allow_sampling: bool) -> dict[str, Any]:
                     col["sample_note"] = "sampling disabled"
                 elif ctype.upper() in ("VARCHAR", "BOOLEAN", "TEXT"):
                     try:
+                        c, t = quote_ident(cname), quote_ident(name)
                         rows = con.execute(
-                            f'SELECT DISTINCT "{cname}" FROM (SELECT "{cname}" FROM "{name}" WHERE "{cname}" IS NOT NULL LIMIT 2000) '
-                            f"ORDER BY 1 LIMIT 5"
+                            f"SELECT DISTINCT {c} FROM (SELECT {c} FROM {t} WHERE {c} IS NOT NULL LIMIT 2000) "  # nosec B608 (quote_ident)
+                            "ORDER BY 1 LIMIT 5"
                         ).fetchall()
                         col["samples"] = [str(r[0])[:80] for r in rows]
                     except duckdb.Error:
