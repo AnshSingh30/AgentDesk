@@ -77,6 +77,7 @@ def create_app(*, include_webhooks: bool = True) -> FastAPI:
     from app.knowledge.router import router as knowledge_router
     from app.orgs.router import router as orgs_router
     from app.playground.router import router as playground_router
+    from app.service_api.router import router as service_api_router
     from app.templates.router import router as templates_router
 
     for r in (
@@ -92,6 +93,7 @@ def create_app(*, include_webhooks: bool = True) -> FastAPI:
         analytics_router,
         admin_router,
         jobs_router,
+        service_api_router,
     ):
         app.include_router(r, prefix="/v1")
     if include_webhooks:

@@ -118,6 +118,19 @@ class ProviderCredential(PKMixin, TimestampMixin, OrgScopedMixin, Base):
     last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
+class AgentApiKey(PKMixin, TimestampMixin, OrgScopedMixin, Base):
+    """Service API key for one agent (only the SHA-256 of the token is stored)."""
+
+    __tablename__ = "agent_api_keys"
+    agent_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("agents.id", ondelete="CASCADE"), index=True)
+    name: Mapped[str] = mapped_column(String(80))
+    key_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    last4: Mapped[str] = mapped_column(String(8))
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
 class AuditLog(PKMixin, Base):
     __tablename__ = "audit_logs"
     __table_args__ = (Index("ix_audit_logs_org_created", "org_id", "created_at"),)
