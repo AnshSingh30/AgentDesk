@@ -58,6 +58,12 @@ class LLMError(Exception):
         super().__init__(f"{code}: {message}")
 
 
+# An empty completion is a provider failure (proxy/upstream error returned as 200), not a real answer;
+# surfacing it keeps outages from being reported to users as "not in your documents".
+def _empty_response() -> LLMError:
+    return LLMError("provider_error", "The model returned an empty response", retryable=True)
+
+
 @dataclass
 class ResolvedModel:
     model: str
@@ -121,8 +127,11 @@ def _platform_base(provider: str) -> str | None:
     return settings.default_llm_api_base if provider == "openai" else None
 
 
-def platform_model(utility: bool = False) -> ResolvedModel:
-    provider, model_id = _split(settings.utility_model if utility else settings.default_chat_model)
+def platform_model(utility: bool = False, model_string: str | None = None) -> ResolvedModel:
+    """Platform-keyed model; `model_string` overrides the configured default (e.g. an eval judge)."""
+    provider, model_id = _split(
+        model_string or (settings.utility_model if utility else settings.default_chat_model)
+    )
     info = model_info(provider, model_id) or {}
     return ResolvedModel(
         model=f"{PREFIXES[provider]}{model_id}",
@@ -318,6 +327,8 @@ async def chat(
         raise map_exception(e) from e
     usage = _usage_from(resp)
     choice = resp.choices[0]
+    if not choice.message.content:
+        raise _empty_response()
     return ChatResult(
         content=choice.message.content or "",
         usage=usage,
@@ -378,6 +389,8 @@ async def stream_chat(
     except Exception as e:  # noqa: BLE001
         raise map_exception(e) from e
     content = "".join(parts)
+    if not content:
+        raise _empty_response()
     if usage.input_tokens == 0 and usage.output_tokens == 0:
         try:
             usage = Usage(

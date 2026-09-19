@@ -194,9 +194,14 @@ def _config(ctx: RunContext) -> dict[str, Any]:
 
 
 async def stream_run(
-    ctx: RunContext, user_text: str, *, resume: dict[str, Any] | None = None
+    ctx: RunContext,
+    user_text: str,
+    *,
+    resume: dict[str, Any] | None = None,
+    state_out: dict[str, Any] | None = None,
 ) -> AsyncIterator[dict[str, Any]]:
-    """Yield SSE-style events {event, data}; persists the run at the end (unless interrupted)."""
+    """Yield SSE-style events {event, data}; persists the run at the end (unless interrupted).
+    `state_out`, if given, receives the final graph state (chunks, SQL attempts, usage...)."""
     graph = get_graph()
     config = _config(ctx)
     started = time.perf_counter()
@@ -261,6 +266,8 @@ async def stream_run(
         return
     snapshot = await graph.aget_state(config)
     state = dict(snapshot.values or {})
+    if state_out is not None:
+        state_out.update(state)
     latency_ms = int((time.perf_counter() - started) * 1000)
     outcome = await persist_run(ctx, state, latency_ms, error)
     usage = state.get("usage") or []
@@ -298,14 +305,15 @@ async def stream_run(
 async def run_once(ctx: RunContext, user_text: str) -> RunOutcome:
     """Non-streaming run (WhatsApp)."""
     final: dict[str, Any] = {}
+    full: dict[str, Any] = {}
     error = None
-    async for ev in stream_run(ctx, user_text):
+    async for ev in stream_run(ctx, user_text, state_out=full):
         if ev["event"] == "done":
             final = ev["data"]
         elif ev["event"] == "error":
             error = ev["data"].get("message")
     return RunOutcome(
-        state=final,
+        state={**full, **final},
         message_id=uuid.UUID(final["message_id"]) if final.get("message_id") else None,
         latency_ms=int(final.get("latency_ms") or 0),
         error=final.get("error") or error,

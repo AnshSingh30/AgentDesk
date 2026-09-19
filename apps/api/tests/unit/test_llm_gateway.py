@@ -44,3 +44,14 @@ def test_platform_api_base_only_for_openai(monkeypatch: pytest.MonkeyPatch) -> N
     assert g.platform_model().api_base == "http://llm:8000/v1"
     monkeypatch.setattr(g.settings, "default_chat_model", "anthropic/claude-sonnet-5")
     assert g.platform_model().api_base is None
+
+
+async def test_empty_completion_is_a_provider_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    async def fake_acompletion(**kw: object) -> SimpleNamespace:
+        return _resp("")
+
+    monkeypatch.setattr(g.litellm, "acompletion", fake_acompletion)
+    rm = g.ResolvedModel(model="openai/x", provider="custom", credential_mode="custom", api_base="http://h")
+    with pytest.raises(g.LLMError) as e:
+        await g.chat(rm, [{"role": "user", "content": "hi"}])
+    assert e.value.code == "provider_error" and e.value.retryable

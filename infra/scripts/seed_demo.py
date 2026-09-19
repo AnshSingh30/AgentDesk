@@ -201,7 +201,7 @@ EXAMPLES = [
     ),
     (
         "Average tenure of employees in Engineering",
-        "SELECT ROUND(AVG(EXTRACT(EPOCH FROM (COALESCE(e.exit_date, CURRENT_DATE) - e.hire_date)) / 86400 / 365.25)::numeric, 2) AS avg_tenure_years FROM employees e JOIN departments d ON d.department_id = e.department_id WHERE d.name = 'Engineering'",
+        "SELECT ROUND(AVG(COALESCE(e.exit_date, CURRENT_DATE) - e.hire_date) / 365.25, 2) AS avg_tenure_years FROM employees e JOIN departments d ON d.department_id = e.department_id WHERE d.name = 'Engineering'",
     ),
     (
         "Gender split by department for active employees",
