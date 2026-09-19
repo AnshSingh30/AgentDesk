@@ -40,6 +40,8 @@ from pydantic import BaseModel
 from sqlalchemy import select
 
 pytestmark = pytest.mark.asyncio
+if os.environ.get("AGENTDESK_LIVE") != "1":
+    pytest.skip("live evals: run `make evals` (AGENTDESK_LIVE=1)", allow_module_level=True)
 HERE = Path(__file__).parent
 REPORTS = HERE / "reports"
 REAL_MODEL = not settings.default_chat_model.startswith("fake/")

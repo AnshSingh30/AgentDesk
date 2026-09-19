@@ -3,7 +3,6 @@ COMPOSE := docker compose -f infra/compose/docker-compose.yml
 UV := uv
 API_DIR := apps/api
 WEB_DIR := apps/web
-PY := $(API_DIR)/.venv/bin/python
 
 help: ## Show targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
@@ -28,19 +27,19 @@ infra-reset: ## Stop infra and delete volumes (DESTROYS LOCAL DATA)
 	$(COMPOSE) --profile dev down -v
 
 migrate: ## Apply database migrations
-	cd $(API_DIR) && .venv/bin/alembic upgrade head
+	cd $(API_DIR) && uv run alembic upgrade head
 
 migration: ## Autogenerate a migration: make migration m="add x"
-	cd $(API_DIR) && .venv/bin/alembic revision --autogenerate -m "$(m)"
+	cd $(API_DIR) && uv run alembic revision --autogenerate -m "$(m)"
 
 api: ## Run the API with hot reload
-	cd $(API_DIR) && .venv/bin/uvicorn app.main:app --reload --port 8000
+	cd $(API_DIR) && uv run uvicorn app.main:app --reload --port 8000
 
 webhook: ## Run the webhook service
-	cd $(API_DIR) && .venv/bin/uvicorn app.webhook_main:app --reload --port 8001
+	cd $(API_DIR) && uv run uvicorn app.webhook_main:app --reload --port 8001
 
 worker: ## Run the ARQ worker
-	cd $(API_DIR) && .venv/bin/arq app.worker.WorkerSettings
+	cd $(API_DIR) && uv run arq app.worker.WorkerSettings
 
 web: ## Run the Next.js dev server
 	cd $(WEB_DIR) && pnpm dev
@@ -48,36 +47,36 @@ web: ## Run the Next.js dev server
 dev: infra-up migrate ## Boot everything for local development (infra in Docker, apps natively)
 	@echo "Starting api (8000), webhook (8001), worker and web (3000). Ctrl+C stops all."
 	@trap 'kill 0' INT TERM; \
-	  (cd $(API_DIR) && .venv/bin/uvicorn app.main:app --reload --port 8000) & \
-	  (cd $(API_DIR) && .venv/bin/uvicorn app.webhook_main:app --reload --port 8001) & \
-	  (cd $(API_DIR) && .venv/bin/arq app.worker.WorkerSettings) & \
+	  (cd $(API_DIR) && uv run uvicorn app.main:app --reload --port 8000) & \
+	  (cd $(API_DIR) && uv run uvicorn app.webhook_main:app --reload --port 8001) & \
+	  (cd $(API_DIR) && uv run arq app.worker.WorkerSettings) & \
 	  (cd $(WEB_DIR) && pnpm dev) & \
 	  wait
 
 seed: ## Load demo orgs, agents, documents, HR dataset and conversations
-	cd $(API_DIR) && .venv/bin/python ../../infra/scripts/seed_demo.py
+	cd $(API_DIR) && uv run python ../../infra/scripts/seed_demo.py
 
 demo-docs: ## Regenerate the demo PDFs/markdown into demo/
-	cd $(API_DIR) && .venv/bin/python ../../infra/scripts/generate_demo_docs.py
+	cd $(API_DIR) && uv run python ../../infra/scripts/generate_demo_docs.py
 
 test: ## Backend unit + integration tests
-	cd $(API_DIR) && .venv/bin/python -m pytest -q
+	cd $(API_DIR) && uv run python -m pytest -q
 
 test-unit: ## Backend unit tests only
-	cd $(API_DIR) && .venv/bin/python -m pytest -q tests/unit
+	cd $(API_DIR) && uv run python -m pytest -q tests/unit
 
 evals: ## Run template eval sets against the configured models
-	cd $(API_DIR) && .venv/bin/python -m pytest -q tests/evals -s
+	cd $(API_DIR) && AGENTDESK_LIVE=1 uv run python -m pytest -q tests/evals -s -p no:cacheprovider
 
 smoke: ## End-to-end smoke test against a running stack
 	bash infra/scripts/smoke.sh
 
 lint: ## Lint + typecheck backend and frontend
-	cd $(API_DIR) && .venv/bin/ruff check . && .venv/bin/ruff format --check . && .venv/bin/mypy
+	cd $(API_DIR) && uv run ruff check . && uv run ruff format --check . && uv run mypy
 	cd $(WEB_DIR) && pnpm lint && pnpm typecheck
 
 format: ## Auto-format
-	cd $(API_DIR) && .venv/bin/ruff check --fix . && .venv/bin/ruff format .
+	cd $(API_DIR) && uv run ruff check --fix . && uv run ruff format .
 	cd $(WEB_DIR) && pnpm prettier --write .
 
 e2e: ## Playwright E2E (needs web on :3000 and api on :8000)

@@ -7,11 +7,15 @@ browser ──> web (Next.js) ──> api (FastAPI) ──┬─> postgres (app 
                                               ├─> redis (queues, rate limits, locks, caches)
                                               ├─> qdrant (chunks, hybrid dense+BM25)
                                               ├─> minio/s3 (documents, duckdb files, exports)
+                                              ├─> embeddings (text-embeddings-inference, optional)
                                               └─> LLM providers via LiteLLM, Tavily
 Meta Graph API ──> webhook (FastAPI) ──> redis queue ──> worker (ARQ) ──> agent graph ──> Meta send API
 ```
 
 ## Request flows
+
+**Service API** (`POST /v1/service/chat`, Bearer `adk_` key): key hash lookup → per-key rate limit → the agent's latest published version → same `prepare_run` / graph / persistence path as the Playground with channel `api`, returning JSON or SSE. See [service-api.md](service-api.md).
+
 
 **Playground message** (`POST /v1/orgs/{org}/playground/sessions/{sid}/messages`, SSE): membership + CSRF + rate limit → load draft config (Redis 60 s cache, busted on save) or a published version → load trimmed history → `prepare_run` builds a `RunContext` (models resolved, dataset context, KB summaries) → the LangGraph run streams `route`, `tool_start`, `tool_result`, `token`, `citations`, `guardrail`, `usage`, `done` events → messages, run trace and usage events are persisted.
 
@@ -21,11 +25,12 @@ Meta Graph API ──> webhook (FastAPI) ──> redis queue ──> worker (ARQ
 
 One compiled LangGraph handles 0, 1 or many tools:
 
-`input_guardrails → (blocked_response) | query_rewrite → router → [rag_retrieve ‖ sql_agent ‖ web_search] → collect_context → generate_answer → output_guardrails → channel_formatter`
+`input_guardrails → (blocked_response) | annotation_reply → (curated answer) | query_rewrite → router → [rag_retrieve ‖ sql_agent ‖ web_search] → collect_context → generate_answer → output_guardrails → channel_formatter`
 
 - The router is skipped logically for 0/1 tools (fixed decisions) and uses the utility model with structured output for ≥2 tools; multi-tool routes fan out with `Send` and join in `collect_context`, which also applies the fallback chain KB → web → no-answer.
 - `sql_agent` invokes the SQL subgraph (`app/sql/agent.py`): intent check → schema selection (≤15 tables inline, otherwise embedded table cards + FK hop) → structured SQL generation → `validate_sql` → optional `interrupt()` for confirm-before-run → read-only execution → reflection/retry (max 3 attempts).
-- Prompts are assembled in PRD order with a token budget (history ≥2 turns kept → chunks → SQL rows → web results trimmed).
+- `annotation_reply` compares the message with the agent's curated Q&A (cosine on cached embeddings) and, above the threshold, answers verbatim and skips straight to the formatter. See [annotations.md](annotations.md).
+- Prompts are assembled in a fixed order (platform preamble → agent prompt → guardrails → context → history → message) with a token budget (history ≥2 turns kept → chunks → SQL rows → web results trimmed).
 - Non-serialisable dependencies travel in `config["configurable"]["ctx"]`; state is a `TypedDict` with reducers for parallel branches.
 - Checkpointer is `MemorySaver` (single process). Use `langgraph-checkpoint-postgres` to run confirm-before-run across multiple API workers.
 
@@ -39,7 +44,7 @@ Postgres introspection reads `pg_catalog`/`information_schema` (tables, views, c
 
 ## Security
 
-See README "Security notes" and `docs/adr`. Cross-tenant tests parametrise every org-scoped endpoint.
+See [security.md](security.md) and the ADRs in [adr/](adr/). Cross-tenant tests parametrise every org-scoped endpoint.
 
 ## Observability
 
