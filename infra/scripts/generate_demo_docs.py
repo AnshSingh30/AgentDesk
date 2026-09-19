@@ -626,14 +626,14 @@ def generate_all(base: Path = DEMO) -> dict[str, list[Path]]:
     northwind_wfh(nw / "WFH and Travel Policy.pdf")
     northwind_benefits(nw / "Benefits Summary.pdf")
     northwind_holidays(nw / "Holiday Calendar 2026.pdf")
-    (nw / "Code of Conduct.md").write_text(NW_CODE_OF_CONDUCT)
-    (nw / "IT Onboarding Guide.md").write_text(NW_IT_GUIDE)
+    (nw / "Code of Conduct.md").write_text(NW_CODE_OF_CONDUCT, encoding="utf-8", newline="\n")
+    (nw / "IT Onboarding Guide.md").write_text(NW_IT_GUIDE, encoding="utf-8", newline="\n")
     greenwood_parent_handbook(gw / "Parent Handbook.pdf")
     greenwood_fees(gw / "Fee Structure 2026-27.pdf")
     greenwood_calendar(gw / "Academic Calendar.pdf")
     greenwood_transport(gw / "Transport Routes.pdf")
-    (gw / "Admissions Guide.md").write_text(GW_ADMISSIONS)
-    (gw / "Uniform Policy.md").write_text(GW_UNIFORM)
+    (gw / "Admissions Guide.md").write_text(GW_ADMISSIONS, encoding="utf-8", newline="\n")
+    (gw / "Uniform Policy.md").write_text(GW_UNIFORM, encoding="utf-8", newline="\n")
     return {"northwind": sorted(nw.iterdir()), "greenwood": sorted(gw.iterdir())}
 
 
