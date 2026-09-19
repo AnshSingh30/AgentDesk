@@ -20,6 +20,13 @@ It was built for teams without an AI engineer, such as HR, school front offices 
 keeps the parts a production system needs: multi-tenancy, RBAC, encrypted secrets, a read-only SQL
 safety layer, audit logs, usage metering, tracing, and an evaluation suite with recorded results.
 
+<p align="center">
+  <img src="docs/images/dashboard.png" width="49%" alt="Dashboard with usage, agents and setup checklist">
+  <img src="docs/images/schema.png" width="49%" alt="Dataset schema review with AI-drafted descriptions and hidden columns">
+  <img src="docs/images/builder.png" width="49%" alt="Agent builder, dataset step">
+  <img src="docs/images/analytics.png" width="49%" alt="Analytics: messages, tool usage, latency and cost">
+</p>
+
 ## Features
 
 **Agents**

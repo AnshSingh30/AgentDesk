@@ -241,7 +241,7 @@ export function Stat({
   return (
     <Card className={cn("p-4", className)}>
       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className="mt-1 text-2xl font-semibold tabular-nums">{value}</p>
+      <div className="mt-1 text-2xl font-semibold tabular-nums">{value}</div>
       {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
     </Card>
   );
