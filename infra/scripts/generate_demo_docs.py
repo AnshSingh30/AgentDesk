@@ -7,6 +7,7 @@ layout-aware parser has something to chew on. Facts match the template eval sets
 from __future__ import annotations
 
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 
 from fpdf import FPDF
@@ -22,6 +23,7 @@ class Doc(FPDF):
         self.org = org
         self.set_auto_page_break(auto=True, margin=18)
         self.set_title(title)
+        self.set_creation_date(datetime(2026, 1, 1, tzinfo=UTC))  # reproducible output
 
     def header(self) -> None:  # noqa: D102
         self.set_font("Helvetica", "I", 8)
