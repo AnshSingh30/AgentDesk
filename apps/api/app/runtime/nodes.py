@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field
 
 from app.guardrails.input import check_input
 from app.guardrails.output import grounding_check, normalise_output
+from app.llm import jev
 from app.llm.gateway import LLMError, StreamDone, chat, stream_chat, structured, usage_record
 from app.rag.embeddings import embed_dense
 from app.rag.retrieval import retrieve
@@ -148,6 +149,17 @@ async def router(state: AgentState, config: RunnableConfig) -> dict[str, Any]:
         decision = {"tools": [], "reason": "No tools are enabled; answering directly."}
     elif len(tools) == 1:
         decision = {"tools": tools, "reason": f"Single tool enabled ({tools[0]}); tool-gated flow."}
+    elif jev.enabled():
+        query = state.get("standalone_query") or state["user_message"]
+        try:
+            decision, jev_usage = await _jev_route(ctx, query, tools)
+            usage.append(jev_usage)
+        except Exception as e:  # noqa: BLE001 - JEV down: fall back to all tools
+            log.warning("jev_router_failed", error=str(e))
+            decision = {
+                "tools": tools,
+                "reason": f"Router unavailable ({type(e).__name__}); using all enabled tools.",
+            }
     else:
         query = state.get("standalone_query") or state["user_message"]
         try:
@@ -174,6 +186,52 @@ async def router(state: AgentState, config: RunnableConfig) -> dict[str, Any]:
             }
     emit("route", decision)
     return {"route": decision, "usage": usage, "timings": {"router": round(time.perf_counter() - t0, 4)}}
+
+
+JEV_TOOL_QUESTIONS = {
+    "rag": (
+        "Answering the user message requires looking up the organisation's documents (policies, handbooks, "
+        "procedures, rules, entitlements, contacts).",
+        "Needs a fact, rule, entitlement or explanation written in the organisation's documents",
+        "Nothing in it needs the documents (pure data/numbers, greeting, thanks or small talk)",
+    ),
+    "sql": (
+        "Answering the user message requires querying the connected dataset (counting, listing, totals, averages, "
+        "trends or comparisons over records).",
+        "Needs numbers, lists or comparisons computed from records in the dataset tables",
+        "Nothing in it needs the dataset (a policy/document question, greeting, thanks or small talk)",
+    ),
+    "web_search": (
+        "Answering the user message requires searching the public web for external information.",
+        "Needs current or external information that is not in the organisation's documents or dataset",
+        "Can be answered from the documents, the dataset, or needs no lookup",
+    ),
+}
+
+
+async def _jev_route(ctx: RunContext, query: str, tools: list[str]) -> tuple[dict[str, Any], dict[str, Any]]:
+    """One Noul per enabled tool (multi-label: a question may need several); code picks those >= 0.5."""
+    sources: dict[str, str] = {}
+    if "rag" in tools:
+        sources["documents"] = (
+            f"{ctx.cfg.routing.rag_instructions} Knowledge bases: {ctx.kb_summary or 'n/a'}"
+        )
+    if "sql" in tools:
+        sources["dataset"] = f"{ctx.cfg.routing.sql_instructions} Tables: {ctx.dataset_summary or 'n/a'}"
+    if "web_search" in tools:
+        sources["web_search"] = ctx.cfg.routing.web_instructions
+    questions = {
+        t: {"type": "noul", "instructions": q, "criteria": {"true": yes, "false": no}}
+        for t, (q, yes, no) in JEV_TOOL_QUESTIONS.items()
+        if t in tools
+    }
+    answers, usage = await jev.ask(
+        {"user_message": query, "available_sources": sources}, questions, node="router"
+    )
+    probs = {t: float(answers[t]["noul"]) for t in questions}
+    chosen = [t for t in tools if probs.get(t, 0.0) >= 0.5]
+    reason = "JEV: " + ", ".join(f"{t} p={p:.2f}" for t, p in probs.items())
+    return {"tools": chosen, "reason": reason, "probabilities": probs}, usage
 
 
 def dispatch(state: AgentState) -> list[Send] | str:
@@ -254,8 +312,12 @@ async def sql_agent(state: AgentState, config: RunnableConfig) -> dict[str, Any]
     )
     hint = "; ".join(f"{m['role']}: {m['content'][:200]}" for m in ctx.history[-4:])
     sub_config = {**config, "configurable": {**config["configurable"], "sql_runtime": rt}}
+    # With several tools the router already judged this a data question; the SQL intent gate only
+    # decides alone in the single-tool flow (where the router is skipped).
+    routed = {"intent": "data_question"} if len(ctx.cfg.tools.enabled_names()) > 1 else {}
     result = await sql_graph.ainvoke(
-        {"question": question, "history_hint": hint, "attempts": [], "usage": [], "timings": {}}, sub_config
+        {"question": question, "history_hint": hint, "attempts": [], "usage": [], "timings": {}, **routed},
+        sub_config,
     )
     status = result.get("status") or ("ok" if result.get("result") else "failed")
     attempts = result.get("attempts") or []

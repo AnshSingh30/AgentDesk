@@ -1,0 +1,1228 @@
+{
+ "template": "school_parent_helpdesk",
+ "model": "azure/gpt-5.4-mini",
+ "utility_model": "azure/gpt-5.4-mini",
+ "judge_model": "azure/gpt-5.4-mini",
+ "embedding_model": "openai/BAAI/bge-base-en-v1.5",
+ "cases": 33,
+ "passed": 31,
+ "metrics": {
+  "route_accuracy": 1.0,
+  "fact_accuracy": 0.935,
+  "groundedness": 1.0,
+  "sql_first_try": null,
+  "sql_with_retries": null,
+  "no_answer_accuracy": 1.0,
+  "privacy": null,
+  "latency_p50_ms": 1219,
+  "latency_p95_ms": 1885,
+  "avg_tokens": 1451
+ },
+ "usage": {
+  "agent": {
+   "input_tokens": 46441,
+   "output_tokens": 1466,
+   "cost_usd": 0.033654
+  },
+  "judge": {
+   "input_tokens": 29931,
+   "output_tokens": 499,
+   "cost_usd": 0.024694
+  },
+  "agent_cost_by_node": {
+   "generate_answer (gpt-5.4-mini)": 0.033654,
+   "rag_retrieve (query)": 0.0
+  }
+ },
+ "run_at": "2026-10-10T17:09:25+00:00",
+ "results": [
+  {
+   "question": "When is the last date for Q3 fee payment?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The last date for **Q3 fee payment without late fee** is **15 December 2026**. After that, a **late fee of Rs. 50 per day** applies. Fees can be paid **online through the parent app** or at the **Accounts office**. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1416,
+   "tokens": 1548,
+   "agent_usage": {
+    "input_tokens": 1484,
+    "output_tokens": 64,
+    "cost_usd": 0.001401
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001401
+   },
+   "judge_usage": {
+    "input_tokens": 1108,
+    "output_tokens": 17,
+    "cost_usd": 0.0009075
+   }
+  },
+  {
+   "question": "What are school timings for class 5?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Class 5 timings are:\n\n- **Monday to Friday:** **8:00 AM \u2013 2:00 PM**\n- **Saturday:** **8:00 AM \u2013 12:00 PM** on the **1st and 3rd Saturday** only\n\nGates open **20 minutes before** start time.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2025,
+   "tokens": 1534,
+   "agent_usage": {
+    "input_tokens": 1467,
+    "output_tokens": 67,
+    "cost_usd": 0.001402
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001402
+   },
+   "judge_usage": {
+    "input_tokens": 1097,
+    "output_tokens": 17,
+    "cost_usd": 0.00089925
+   }
+  },
+  {
+   "question": "Kal school khula hai kya 2 October ko?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "2 October 2026 ko school **closed** hai. Gandhi Jayanti ke liye school band rahega. [2]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1200,
+   "tokens": 1476,
+   "agent_usage": {
+    "input_tokens": 1446,
+    "output_tokens": 30,
+    "cost_usd": 0.001219
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001219
+   },
+   "judge_usage": {
+    "input_tokens": 1034,
+    "output_tokens": 17,
+    "cost_usd": 0.000852
+   }
+  },
+  {
+   "question": "Which bus route covers Gomti Nagar?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Gomti Nagar is covered by **Route 3**. [1]\n\n- **First pick-up:** 7:05 AM [1]\n- **Quarterly fee:** Rs. 6,000 [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1619,
+   "tokens": 1602,
+   "agent_usage": {
+    "input_tokens": 1554,
+    "output_tokens": 48,
+    "cost_usd": 0.001382
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001382
+   },
+   "judge_usage": {
+    "input_tokens": 1160,
+    "output_tokens": 17,
+    "cost_usd": 0.0009465
+   }
+  },
+  {
+   "question": "What is my son's attendance this month?",
+   "passed": false,
+   "checks": {
+    "route": true,
+    "facts": false,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": null
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "I don't have that information. Please contact the school office - the contact details are in the parent handbook.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1219,
+   "tokens": 1300,
+   "agent_usage": {
+    "input_tokens": 1276,
+    "output_tokens": 24,
+    "cost_usd": 0.001065
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001065
+   },
+   "judge_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0
+   }
+  },
+  {
+   "question": "What are the timings for nursery?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Nursery timings are:\n\n- **Monday to Friday:** **8:30 AM \u2013 12:00 PM**\n- **Saturday:** **Closed**\n\nGates open **20 minutes before** start time. Students arriving **more than 15 minutes late** need a late slip from the front office. [2]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1339,
+   "tokens": 1711,
+   "agent_usage": {
+    "input_tokens": 1645,
+    "output_tokens": 66,
+    "cost_usd": 0.001531
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001531
+   },
+   "judge_usage": {
+    "input_tokens": 1271,
+    "output_tokens": 17,
+    "cost_usd": 0.00102975
+   }
+  },
+  {
+   "question": "What time does school start for class 8?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Class 8 is in **Class 6\u201312**.\n\n- **School timing:** **7:45 AM \u2013 2:15 PM** on **Mon\u2013Fri** [1]\n- **Saturday:** **7:45 AM \u2013 12:30 PM** on **1st & 3rd Saturday** [1]\n\nGates open **20 minutes before** start time. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1161,
+   "tokens": 1655,
+   "agent_usage": {
+    "input_tokens": 1570,
+    "output_tokens": 85,
+    "cost_usd": 0.00156
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.00156
+   },
+   "judge_usage": {
+    "input_tokens": 1211,
+    "output_tokens": 23,
+    "cost_usd": 0.00101175
+   }
+  },
+  {
+   "question": "Which Saturdays do classes 1 to 5 have school?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Classes 1 to 5 have school on the **1st and 3rd Saturday** of each month.  \nTimings: **8:00 AM - 12:00 PM**.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 940,
+   "tokens": 1422,
+   "agent_usage": {
+    "input_tokens": 1379,
+    "output_tokens": 43,
+    "cost_usd": 0.001228
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001228
+   },
+   "judge_usage": {
+    "input_tokens": 981,
+    "output_tokens": 17,
+    "cost_usd": 0.0008122499999999999
+   }
+  },
+  {
+   "question": "How much is the late fee if I pay after the due date?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The late fee is **Rs. 50 per day** after the due date for **Q3 fee payment**. The last date without late fee is **15 December 2026**. [1]\n\nFees can be paid **online through the parent app** or at the **Accounts office**. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1079,
+   "tokens": 1431,
+   "agent_usage": {
+    "input_tokens": 1364,
+    "output_tokens": 67,
+    "cost_usd": 0.001325
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001325
+   },
+   "judge_usage": {
+    "input_tokens": 994,
+    "output_tokens": 17,
+    "cost_usd": 0.000822
+   }
+  },
+  {
+   "question": "What is the total annual fee for class 3?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The total annual fee for **Class 3** is **Rs. 75,000**. [1]\n\nIf you want, I can also share the **due dates** and **late fee dates** for Class 3.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1558,
+   "tokens": 1388,
+   "agent_usage": {
+    "input_tokens": 1338,
+    "output_tokens": 50,
+    "cost_usd": 0.001228
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001228
+   },
+   "judge_usage": {
+    "input_tokens": 953,
+    "output_tokens": 17,
+    "cost_usd": 0.00079125
+   }
+  },
+  {
+   "question": "What is the total fee for class 10?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Class 9 - 10 total fee is **Rs. 1,01,000**. [1]\n\n- Tuition fee: **Rs. 90,000**\n- Annual charges: **Rs. 11,000** [1]\n\nIf you want, I can also share the payment schedule and due dates.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1885,
+   "tokens": 1428,
+   "agent_usage": {
+    "input_tokens": 1360,
+    "output_tokens": 68,
+    "cost_usd": 0.001326
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001326
+   },
+   "judge_usage": {
+    "input_tokens": 991,
+    "output_tokens": 17,
+    "cost_usd": 0.00081975
+   }
+  },
+  {
+   "question": "How much is the admission fee?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The admission fee is **Rs. 25,000**. [1][2]\n\nIf you need help with admissions, you can contact:\n- **admissions@greenwood.example**\n- **0522-400-1003**\n- **Mon-Sat 9:00 AM - 1:00 PM** [2][4]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1298,
+   "tokens": 1383,
+   "agent_usage": {
+    "input_tokens": 1310,
+    "output_tokens": 73,
+    "cost_usd": 0.001311
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001311
+   },
+   "judge_usage": {
+    "input_tokens": 947,
+    "output_tokens": 17,
+    "cost_usd": 0.00078675
+   }
+  },
+  {
+   "question": "Is the caution deposit refundable and how much is it?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Yes \u2014 the caution deposit is **refundable** and the amount is **Rs. 10,000**. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 862,
+   "tokens": 1357,
+   "agent_usage": {
+    "input_tokens": 1328,
+    "output_tokens": 29,
+    "cost_usd": 0.001126
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001126
+   },
+   "judge_usage": {
+    "input_tokens": 922,
+    "output_tokens": 17,
+    "cost_usd": 0.000768
+   }
+  },
+  {
+   "question": "What documents are needed for admission to class 1?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "- Birth certificate (original and one copy)  \n- Two passport-size photographs of the child and one of each parent  \n- Aadhaar card copy of the child and parents  \n- Proof of residence (electricity bill, rent agreement or passport)  \n- Transfer certificate from the previous school, if applicable  \n- Immunisation record",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1208,
+   "tokens": 1217,
+   "agent_usage": {
+    "input_tokens": 1149,
+    "output_tokens": 68,
+    "cost_usd": 0.001168
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001168
+   },
+   "judge_usage": {
+    "input_tokens": 785,
+    "output_tokens": 17,
+    "cost_usd": 0.0006652499999999999
+   }
+  },
+  {
+   "question": "What is the minimum age for class 1 admission?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Class 1 admission minimum age is **5 years 6 months** on **31 March 2026**. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 912,
+   "tokens": 1268,
+   "agent_usage": {
+    "input_tokens": 1239,
+    "output_tokens": 29,
+    "cost_usd": 0.00106
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.00106
+   },
+   "judge_usage": {
+    "input_tokens": 835,
+    "output_tokens": 17,
+    "cost_usd": 0.0007027499999999999
+   }
+  },
+  {
+   "question": "What are the accounts office hours?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The **Accounts office** is open:\n\n- **Mon\u2013Fri:** 9:00 AM \u2013 2:00 PM [1]\n\nFor fee-related queries, you can also email **accounts@greenwood.example** or call **0522-400-1002**. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1088,
+   "tokens": 1431,
+   "agent_usage": {
+    "input_tokens": 1369,
+    "output_tokens": 62,
+    "cost_usd": 0.001306
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001306
+   },
+   "judge_usage": {
+    "input_tokens": 994,
+    "output_tokens": 17,
+    "cost_usd": 0.000822
+   }
+  },
+  {
+   "question": "What is the email for fee queries?",
+   "passed": false,
+   "checks": {
+    "route": true,
+    "facts": false,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": null
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "I don't have that information. Please contact the school office - the contact details are in the parent handbook.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 922,
+   "tokens": 1382,
+   "agent_usage": {
+    "input_tokens": 1358,
+    "output_tokens": 24,
+    "cost_usd": 0.001127
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001127
+   },
+   "judge_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0
+   }
+  },
+  {
+   "question": "What is the transport in-charge's phone number?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The transport in-charge\u2019s phone number is **98390-00123**.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1845,
+   "tokens": 1627,
+   "agent_usage": {
+    "input_tokens": 1608,
+    "output_tokens": 19,
+    "cost_usd": 0.000428
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.000428
+   },
+   "judge_usage": {
+    "input_tokens": 1187,
+    "output_tokens": 17,
+    "cost_usd": 0.0009667499999999999
+   }
+  },
+  {
+   "question": "Which areas does bus route 1 cover?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Route 1 covers:\n\n- Hazratganj\n- Lalbagh\n- Aminabad [1]\n\nIf you want, I can also share the first pick-up time and transport fee for Route 1.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1221,
+   "tokens": 1522,
+   "agent_usage": {
+    "input_tokens": 1476,
+    "output_tokens": 46,
+    "cost_usd": 0.00045
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.00045
+   },
+   "judge_usage": {
+    "input_tokens": 1083,
+    "output_tokens": 17,
+    "cost_usd": 0.00088875
+   }
+  },
+  {
+   "question": "What is the quarterly bus fee for Gomti Nagar?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The quarterly bus fee for **Gomti Nagar** is **Rs. 6,000**. It is covered by **Route 3**. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1288,
+   "tokens": 1662,
+   "agent_usage": {
+    "input_tokens": 1625,
+    "output_tokens": 37,
+    "cost_usd": 0.000521
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.000521
+   },
+   "judge_usage": {
+    "input_tokens": 1220,
+    "output_tokens": 17,
+    "cost_usd": 0.0009915
+   }
+  },
+  {
+   "question": "When does winter vacation start?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Winter vacation starts on **24 December 2026** and ends on **3 January 2027**. [3]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1378,
+   "tokens": 1533,
+   "agent_usage": {
+    "input_tokens": 1505,
+    "output_tokens": 28,
+    "cost_usd": 0.000391
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.000391
+   },
+   "judge_usage": {
+    "input_tokens": 1090,
+    "output_tokens": 17,
+    "cost_usd": 0.0008939999999999999
+   }
+  },
+  {
+   "question": "When are the term 1 exams?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Term 1 examinations are from **14 to 25 September 2026**. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1204,
+   "tokens": 1554,
+   "agent_usage": {
+    "input_tokens": 1531,
+    "output_tokens": 23,
+    "cost_usd": 0.000388
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.000388
+   },
+   "judge_usage": {
+    "input_tokens": 1115,
+    "output_tokens": 17,
+    "cost_usd": 0.0009127499999999999
+   }
+  },
+  {
+   "question": "When is the annual sports day?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Annual Sports Day is on **12 December 2026**.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 768,
+   "tokens": 1446,
+   "agent_usage": {
+    "input_tokens": 1430,
+    "output_tokens": 16,
+    "cost_usd": 0.00028
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.00028
+   },
+   "judge_usage": {
+    "input_tokens": 1006,
+    "output_tokens": 17,
+    "cost_usd": 0.000831
+   }
+  },
+  {
+   "question": "When are parent-teacher meetings held?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Parent-teacher meetings are held on the **second Saturday of every month** from **9:00 AM to 12:00 PM**. [2]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1785,
+   "tokens": 1392,
+   "agent_usage": {
+    "input_tokens": 1357,
+    "output_tokens": 35,
+    "cost_usd": 0.001175
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001175
+   },
+   "judge_usage": {
+    "input_tokens": 952,
+    "output_tokens": 17,
+    "cost_usd": 0.0007905
+   }
+  },
+  {
+   "question": "What is the minimum attendance required for final exams?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "A minimum of **75% attendance** is required to sit for final examinations. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1122,
+   "tokens": 1302,
+   "agent_usage": {
+    "input_tokens": 1280,
+    "output_tokens": 22,
+    "cost_usd": 0.001059
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001059
+   },
+   "judge_usage": {
+    "input_tokens": 867,
+    "output_tokens": 17,
+    "cost_usd": 0.00072675
+   }
+  },
+  {
+   "question": "On which days is the sports uniform worn?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Sports uniform is worn on **Wednesday and Saturday**. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 866,
+   "tokens": 1258,
+   "agent_usage": {
+    "input_tokens": 1241,
+    "output_tokens": 17,
+    "cost_usd": 0.001007
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001007
+   },
+   "judge_usage": {
+    "input_tokens": 820,
+    "output_tokens": 17,
+    "cost_usd": 0.0006915
+   }
+  },
+  {
+   "question": "Where can I buy the school uniform?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "You can buy the uniform from the **authorised vendor**:\n\n- **Greenwood Uniform Store**\n- **Location:** next to **Gate 2**\n- **Hours:** **Mon-Sat, 8:00 AM - 5:00 PM**",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1259,
+   "tokens": 1378,
+   "agent_usage": {
+    "input_tokens": 1323,
+    "output_tokens": 55,
+    "cost_usd": 0.00124
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.00124
+   },
+   "judge_usage": {
+    "input_tokens": 942,
+    "output_tokens": 17,
+    "cost_usd": 0.000783
+   }
+  },
+  {
+   "question": "Who do I call in an emergency during school hours?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Call the school office immediately at **0522-400-1000** during school hours.  \nIf needed, the **school nurse emergency number** is **0522-400-1010**.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 822,
+   "tokens": 1381,
+   "agent_usage": {
+    "input_tokens": 1337,
+    "output_tokens": 44,
+    "cost_usd": 0.001201
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001201
+   },
+   "judge_usage": {
+    "input_tokens": 942,
+    "output_tokens": 17,
+    "cost_usd": 0.000783
+   }
+  },
+  {
+   "question": "What time is the school nurse available from?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The nurse is on duty from **7:30 AM to 3:00 PM**. [1]\n\nIf it\u2019s an emergency during school hours, call the school office at **0522-400-1000** immediately. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1225,
+   "tokens": 1624,
+   "agent_usage": {
+    "input_tokens": 1571,
+    "output_tokens": 53,
+    "cost_usd": 0.000553
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.000553
+   },
+   "judge_usage": {
+    "input_tokens": 1184,
+    "output_tokens": 17,
+    "cost_usd": 0.0009645
+   }
+  },
+  {
+   "question": "Q3 ki fees kab tak jama karni hai?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Q3 (October\u2013December) fee **15 December 2026** tak bina late fee ke jama karni hai. [1]\n\n- Late fee: **Rs. 50 per day** after the last date. [1]\n- Payment: **parent app** se online ya **Accounts office** mein. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1362,
+   "tokens": 1594,
+   "agent_usage": {
+    "input_tokens": 1524,
+    "output_tokens": 70,
+    "cost_usd": 0.000594
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.000594
+   },
+   "judge_usage": {
+    "input_tokens": 1155,
+    "output_tokens": 17,
+    "cost_usd": 0.00094275
+   }
+  },
+  {
+   "question": "Bus route 5 kaunse area cover karta hai?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Route 5 covers **Sushant Golf City, Shaheed Path, and Arjunganj**. [1]\n\n- **First pick-up:** 7:00 AM [1]\n- **Quarterly fee:** Rs. 7,500 [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1187,
+   "tokens": 1525,
+   "agent_usage": {
+    "input_tokens": 1469,
+    "output_tokens": 56,
+    "cost_usd": 0.00049
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.00049
+   },
+   "judge_usage": {
+    "input_tokens": 1085,
+    "output_tokens": 17,
+    "cost_usd": 0.00089025
+   }
+  },
+  {
+   "question": "What is the name of the school's cricket coach?",
+   "passed": true,
+   "checks": {
+    "route": null,
+    "facts": null,
+    "no_answer": true,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": null
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "[I don't have that information. Please contact the school office - the contact details are in the parent handbook.]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 929,
+   "tokens": 1376,
+   "agent_usage": {
+    "input_tokens": 1352,
+    "output_tokens": 24,
+    "cost_usd": 0.001122
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001122
+   },
+   "judge_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0
+   }
+  },
+  {
+   "question": "Can you help me file my income tax return?",
+   "passed": true,
+   "checks": {
+    "route": null,
+    "facts": null,
+    "no_answer": true,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": null
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "I don't have that information. Please contact the school office - the contact details are in the parent handbook.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1954,
+   "tokens": 1200,
+   "agent_usage": {
+    "input_tokens": 1176,
+    "output_tokens": 24,
+    "cost_usd": 0.00099
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.00099
+   },
+   "judge_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0
+   }
+  }
+ ]
+}

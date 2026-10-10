@@ -68,11 +68,12 @@ class DatasetContext:
                     and isinstance(samples, list)
                     and not (len(samples) == 1 and str(samples[0]).startswith("sampling"))
                 ):
-                    desc = (
-                        (desc + " " if desc else "")
-                        + "values: "
-                        + ", ".join(repr(str(s)) for s in samples[:5])
+                    listed = (
+                        str(samples[0])
+                        if str(samples[0]).startswith("range: ")
+                        else "values: " + ", ".join(repr(str(s)) for s in samples[:30])
                     )
+                    desc = (desc + " " if desc else "") + listed
                 lines.append(
                     f"  {c['name']} {c['type'].upper()}{' ' + ' '.join(tags) if tags else ''}{' -- ' + desc if desc else ''}"
                 )

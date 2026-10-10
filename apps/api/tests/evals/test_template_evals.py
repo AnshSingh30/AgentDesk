@@ -32,9 +32,10 @@ import pytest
 import yaml
 from app.agents.schemas import AgentConfig
 from app.core.config import settings
-from app.db.models import Agent, Conversation, Organization, User
+from app.db.models import Agent, Conversation, Membership, Organization, User
 from app.db.session import get_sessionmaker
 from app.llm import gateway
+from app.runtime.prompts import format_sql_result
 from app.runtime.runner import prepare_run, run_once
 from pydantic import BaseModel
 from sqlalchemy import select
@@ -58,7 +59,7 @@ THRESHOLDS = {  # PRD §2.3
     "no_answer_accuracy": 0.80,
     "privacy": 1.0,
 }
-TEMPLATES = ["hr_onboarding", "hr_analytics", "school_parent_helpdesk"]
+TEMPLATES = ["hr_onboarding", "hr_analytics", "school_parent_helpdesk", "hr_analytics_extended"]
 
 
 # ---------------------------------------------------------------- matching helpers
@@ -89,6 +90,17 @@ def contains(answer: str, form: str) -> bool:
     return form in answer
 
 
+def value_ok(answer: str, v: Any) -> bool:
+    """A reference value appears in the answer; a more precise number that rounds to it also counts."""
+    if any(contains(answer, f) for f in value_forms(v)):
+        return True
+    if isinstance(v, Decimal) and not isinstance(v, bool) and v != v.to_integral_value():
+        places = -int(v.as_tuple().exponent)
+        nums = re.findall(r"(?<![\d.])\d+\.\d+", answer)
+        return any(round(Decimal(n), places) == v for n in nums)
+    return False
+
+
 def fact_ok(answer: str, fact: str | list[str]) -> bool:
     options = fact if isinstance(fact, list) else [fact]
     return any(contains(answer, normalize(o)) for o in options)
@@ -113,15 +125,26 @@ QUESTION: {question}
 ASSISTANT: {answer}"""
 
 
-async def judge_declined(question: str, answer: str) -> bool | None:
+def add_spend(spend: dict[str, float], result: gateway.ChatResult) -> None:
+    spend["input_tokens"] += result.usage.input_tokens
+    spend["output_tokens"] += result.usage.output_tokens
+    spend["cost_usd"] += result.est_cost_usd
+
+
+def new_spend() -> dict[str, float]:
+    return {"input_tokens": 0, "output_tokens": 0, "cost_usd": 0.0}
+
+
+async def judge_declined(question: str, answer: str, spend: dict[str, float]) -> bool | None:
     rm = gateway.platform_model(model_string=JUDGE_MODEL)
     msg = DECLINE_PROMPT.format(question=question, answer=answer)
     try:
-        verdict, _ = await gateway.structured(
+        verdict, res = await gateway.structured(
             rm, [{"role": "user", "content": msg}], Declined, max_tokens=200
         )
     except gateway.LLMError:
         return None
+    add_spend(spend, res)
     return verdict.declined
 
 
@@ -144,19 +167,22 @@ ANSWER:
 {answer}"""
 
 
-async def judge(question: str, state: dict[str, Any], answer: str) -> tuple[bool | None, list[str]]:
+async def judge(
+    question: str, state: dict[str, Any], answer: str, spend: dict[str, float]
+) -> tuple[bool | None, list[str]]:
     parts = [
         f"[{i}] {c.get('filename')} (page {c.get('page_start')}, {c.get('section_title') or ''}): {c.get('text', '')}"
         for i, c in enumerate(state.get("rag_chunks") or [], 1)
     ]
-    if state.get("sql_result"):
-        parts.append("SQL result: " + json.dumps(state["sql_result"], default=str)[:6000])
+    if state.get("sql_result"):  # same block the answer model saw, including the query it ran
+        sql = (state.get("sql_attempts") or [{}])[-1].get("sql")
+        parts.append(format_sql_result(sql, state["sql_result"])[:6000])
     context = "\n---\n".join(p for p in parts if p)[:24000]
     if not context:
         return None, []
     rm = gateway.platform_model(model_string=JUDGE_MODEL)
     try:
-        verdict, _ = await gateway.structured(
+        verdict, res = await gateway.structured(
             rm,
             [
                 {
@@ -169,17 +195,29 @@ async def judge(question: str, state: dict[str, Any], answer: str) -> tuple[bool
         )
     except gateway.LLMError:
         return None, ["judge failed"]
+    add_spend(spend, res)
     return verdict.grounded, verdict.unsupported_claims
 
 
 # ---------------------------------------------------------------- running
 async def seeded_agent(template_key: str) -> tuple[Organization, Agent, User] | None:
     async with get_sessionmaker()() as session:
+        user = (
+            await session.execute(select(User).where(User.email == "demo@example.com"))
+        ).scalar_one_or_none()
+        if user is None:
+            return None
+        # Only the demo user's orgs: integration tests create same-template agents in empty throwaway orgs.
         agent = (
             (
                 await session.execute(
                     select(Agent)
-                    .where(Agent.template_key == template_key, Agent.deleted_at.is_(None))
+                    .join(Membership, Membership.org_id == Agent.org_id)
+                    .where(
+                        Membership.user_id == user.id,
+                        Agent.template_key == template_key,
+                        Agent.deleted_at.is_(None),
+                    )
                     .order_by(Agent.created_at.desc())
                 )
             )
@@ -189,10 +227,7 @@ async def seeded_agent(template_key: str) -> tuple[Organization, Agent, User] | 
         if agent is None:
             return None
         org = await session.get(Organization, agent.org_id)
-        user = (
-            await session.execute(select(User).where(User.email == "demo@example.com"))
-        ).scalar_one_or_none()
-        return (org, agent, user) if org and user else None
+        return (org, agent, user) if org else None
 
 
 async def run_case(
@@ -220,6 +255,15 @@ async def run_case(
         await session.commit()
     outcome = await run_once(ctx, q)
     state = outcome.state
+    agent_spend = new_spend()
+    by_node: dict[str, float] = {}
+    for u in state.get("usage") or []:
+        node = f"{u.get('node') or u.get('kind')} ({u.get('model') or '-'})"
+        by_node[node] = by_node.get(node, 0.0) + float(u.get("est_cost_usd", 0.0))
+        agent_spend["input_tokens"] += int(u.get("input_tokens", 0))
+        agent_spend["output_tokens"] += int(u.get("output_tokens", 0))
+        agent_spend["cost_usd"] += float(u.get("est_cost_usd", 0.0))
+    judge_spend = new_spend()
     llm_errors = [e["error"] for e in state.get("tool_errors") or [] if e.get("tool") == "llm"]
     if outcome.error or llm_errors:  # provider failure: not a model-quality result
         return {
@@ -232,7 +276,10 @@ async def run_case(
             "answer": state.get("answer") or "",
             "unsupported_claims": [],
             "latency_ms": outcome.latency_ms,
-            "tokens": 0,
+            "tokens": agent_spend["input_tokens"] + agent_spend["output_tokens"],
+            "agent_usage": agent_spend,
+            "cost_by_node": by_node,
+            "judge_usage": judge_spend,
         }
     raw_answer = state.get("answer") or ""
     answer = normalize(raw_answer)
@@ -244,16 +291,14 @@ async def run_case(
 
     fact_results = [fact_ok(answer, f) for f in case.get("expected_facts", [])]
     if refs is not None:  # any acceptable reference query whose whole first row is in the answer
-        fact_results.append(
-            any(row and all(any(contains(answer, f) for f in value_forms(v)) for v in row) for row in refs)
-        )
+        fact_results.append(any(row and all(value_ok(answer, v) for v in row) for row in refs))
     checks["facts"] = all(fact_results) if fact_results else None
 
     said_no = bool(state.get("no_answer") or state.get("blocked")) or (
         normalize(cfg.guardrails.no_answer_message)[:40] in answer
     )
     if case.get("expected_no_answer"):
-        checks["no_answer"] = said_no or bool(REAL_MODEL and await judge_declined(q, raw_answer))
+        checks["no_answer"] = said_no or bool(REAL_MODEL and await judge_declined(q, raw_answer, judge_spend))
     else:
         checks["no_answer"] = None
 
@@ -275,12 +320,9 @@ async def run_case(
 
     grounded, unsupported = (None, [])
     if REAL_MODEL and not said_no and raw_answer:
-        grounded, unsupported = await judge(q, state, raw_answer)
+        grounded, unsupported = await judge(q, state, raw_answer, judge_spend)
     checks["grounded"] = grounded
 
-    tokens = sum(
-        int(u.get("input_tokens", 0)) + int(u.get("output_tokens", 0)) for u in state.get("usage") or []
-    )
     return {
         "question": q,
         "passed": outcome.error is None and all(v for v in checks.values() if v is not None),
@@ -291,7 +333,10 @@ async def run_case(
         "unsupported_claims": unsupported,
         "error": outcome.error,
         "latency_ms": outcome.latency_ms,
-        "tokens": tokens,
+        "tokens": agent_spend["input_tokens"] + agent_spend["output_tokens"],
+        "agent_usage": agent_spend,
+        "cost_by_node": by_node,
+        "judge_usage": judge_spend,
     }
 
 
@@ -328,6 +373,44 @@ def write_summary() -> None:
             + f" | {m['latency_p50_ms'] / 1000:.1f}s / {m['latency_p95_ms'] / 1000:.1f}s |"
         )
     lines += ["", "Thresholds: " + ", ".join(f"{k} ≥ {v:.0%}" for k, v in THRESHOLDS.items()), ""]
+    lines += [
+        "## Tokens and cost",
+        "",
+        "Token counts come from the provider's `usage` field; cost is LiteLLM's price map for the served model. "
+        "Judge = the grading calls, not part of what an end user would pay for.",
+        "",
+        "| Template | Agent input | Agent output | Agent cost | Agent cost / case | Judge tokens | Judge cost |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    node_lines: list[str] = []
+    tot: dict[str, float] = {"ai": 0, "ao": 0, "ac": 0.0, "jt": 0, "jc": 0.0, "n": 0}
+    for r in reports:
+        a, j = r.get("usage", {}).get("agent"), r.get("usage", {}).get("judge")
+        if r.get("usage", {}).get("agent_cost_by_node"):
+            node_lines.append(
+                f"- **{r['template']}**: "
+                + ", ".join(f"{k} ${v:.4f}" for k, v in r["usage"]["agent_cost_by_node"].items())
+            )
+        if not a or not j:
+            continue
+        jt = j["input_tokens"] + j["output_tokens"]
+        lines.append(
+            f"| {r['template']} | {a['input_tokens']:,.0f} | {a['output_tokens']:,.0f} | ${a['cost_usd']:.4f} "
+            f"| ${a['cost_usd'] / r['cases']:.5f} | {jt:,.0f} | ${j['cost_usd']:.4f} |"
+        )
+        for k, v in (("ai", a["input_tokens"]), ("ao", a["output_tokens"]), ("ac", a["cost_usd"])):
+            tot[k] += v
+        tot["jt"] += jt
+        tot["jc"] += j["cost_usd"]
+        tot["n"] += r["cases"]
+    if tot["n"]:
+        lines.append(
+            f"| **Total** | {tot['ai']:,.0f} | {tot['ao']:,.0f} | ${tot['ac']:.4f} | ${tot['ac'] / tot['n']:.5f} "
+            f"| {tot['jt']:,.0f} | ${tot['jc']:.4f} |"
+        )
+    if node_lines:
+        lines += ["", "Agent cost by node (model):", "", *node_lines]
+    lines.append("")
     for r in reports:
         failed = [x for x in r["results"] if not x["passed"]]
         lines += [f"## {r['template']} — {len(failed)} failing case(s)", f"Run at {r['run_at']}", ""]
@@ -345,7 +428,7 @@ def write_summary() -> None:
 async def test_template_eval_set(template_key: str) -> None:
     if os.environ.get("EVAL_ONLY") and os.environ["EVAL_ONLY"] not in template_key:
         pytest.skip("filtered by EVAL_ONLY")
-    seeded = await seeded_agent(template_key)
+    seeded = await seeded_agent(template_key.removesuffix("_extended"))
     if seeded is None:
         pytest.skip("run `make seed` first")
     org, agent, user = seeded
@@ -387,6 +470,15 @@ async def test_template_eval_set(template_key: str) -> None:
         "latency_p95_ms": latencies[max(0, round(0.95 * len(latencies)) - 1)],
         "avg_tokens": int(statistics.mean(r["tokens"] for r in results)),
     }
+    usage = {
+        who: {k: round(sum(r[f"{who}_usage"][k] for r in results), 6) for k in new_spend()}
+        for who in ("agent", "judge")
+    }
+    nodes: dict[str, float] = {}
+    for r in results:
+        for k, v in r["cost_by_node"].items():
+            nodes[k] = nodes.get(k, 0.0) + v
+    usage["agent_cost_by_node"] = {k: round(v, 6) for k, v in sorted(nodes.items(), key=lambda kv: -kv[1])}
     report = {
         "template": template_key,
         "model": settings.default_chat_model,
@@ -396,6 +488,7 @@ async def test_template_eval_set(template_key: str) -> None:
         "cases": len(results),
         "passed": sum(r["passed"] for r in results),
         "metrics": metrics,
+        "usage": usage,
         "run_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "results": results,
     }
@@ -403,6 +496,7 @@ async def test_template_eval_set(template_key: str) -> None:
     (REPORTS / f"{template_key}.json").write_text(json.dumps(report, indent=1, default=str), encoding="utf-8")
     write_summary()
     print(f"\n[{template_key}] {report['passed']}/{len(results)} passed · " + json.dumps(metrics))
+    print(f"[{template_key}] usage: " + json.dumps(usage))
 
     assert all(r["error"] is None for r in results), [r for r in results if r["error"]]
     if REAL_MODEL:

@@ -14,6 +14,7 @@ AgentDesk talks to every model through [LiteLLM](https://docs.litellm.ai/), so m
 |---|---|---|
 | `DEFAULT_CHAT_MODEL` | `fake/chat` | Platform model for answers. `fake/chat` is a deterministic demo model that needs no key |
 | `DEFAULT_UTILITY_MODEL` | *(chat model)* | Cheaper model for routing, query rewriting, schema drafting and classifiers |
+| `JEV_API_KEY` | – | [TypeSafe JEV](https://docs.typesafe.ai) for the router and the SQL intent gate (typed yes/no and choice judgments, $0.042/M input tokens, output free). Unset: the utility model does this. If JEV errors, the router uses all enabled tools and the SQL gate assumes a data question |
 | `DEFAULT_LLM_API_BASE` | – | Base URL of an OpenAI-compatible server for `openai/...` models (vLLM, Ollama, LM Studio, a LiteLLM proxy…) |
 | `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENROUTER_API_KEY` | – | Platform keys, used when agents run in "Platform default" mode |
 

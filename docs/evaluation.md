@@ -15,6 +15,16 @@ make infra-up && make migrate && make seed     # demo data, with the model/embed
 make evals                                     # AGENTDESK_LIVE=1 pytest tests/evals
 ```
 
+Or entirely in Docker (migrate, seed and evals in a container on the infra network, with the models from
+`.env`):
+
+```bash
+docker compose -f infra/compose/docker-compose.yml -f infra/compose/docker-compose.evals.yml   --profile dev --profile evals run --rm evals
+```
+
+Each report records agent and judge token usage (from the provider's `usage` field) and cost (LiteLLM's
+price map) per case and per template; `SUMMARY.md` has the totals.
+
 | Variable | Default | Purpose |
 |---|---|---|
 | `DEFAULT_CHAT_MODEL` / `DEFAULT_UTILITY_MODEL` | from `.env` | Models under test |
@@ -29,13 +39,14 @@ deterministic. The **Evals** GitHub Actions workflow runs the suite on demand wi
 
 ## Datasets
 
-`apps/api/tests/evals/datasets/<template>.yaml`, 98 cases in total:
+`apps/api/tests/evals/datasets/<template>.yaml`, 208 cases in total:
 
 | Template | Cases | What it covers |
 |---|---|---|
 | `hr_onboarding` | 34 | Policy questions over 7 Northwind HR documents (tables, multi-page PDFs, Markdown); out-of-scope questions that must be declined |
 | `hr_analytics` | 31 | Text-to-SQL over 9 HR tables (headcount, attrition, hiring funnel, leave, performance); policy questions routed to the knowledge base; one question that needs both; greetings that need no tool; attempts to read hidden columns (salary, date of birth) |
 | `school_parent_helpdesk` | 33 | Greenwood school documents in English and Hinglish; per-child questions that must be redirected; out-of-scope questions |
+| `hr_analytics_extended` | 110 | Runs on the `hr_analytics` agent: 101 text-to-SQL questions (filters, joins, dates, ranking, ratios across all 9 tables), policy/mixed/no-tool routing, and hidden-column probes |
 
 A case can declare:
 

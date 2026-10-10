@@ -55,3 +55,20 @@ async def test_empty_completion_is_a_provider_error(monkeypatch: pytest.MonkeyPa
     with pytest.raises(g.LLMError) as e:
         await g.chat(rm, [{"role": "user", "content": "hi"}])
     assert e.value.code == "provider_error" and e.value.retryable
+
+
+async def test_jev_router_picks_every_tool_at_or_above_half(monkeypatch: pytest.MonkeyPatch) -> None:
+    from app.runtime import nodes
+
+    sent: dict = {}
+
+    async def fake_ask(state: object, questions: dict, *, node: str) -> tuple[dict, dict]:
+        sent.update(questions)
+        return {"rag": {"noul": 0.5}, "sql": {"noul": 0.93}, "web_search": {"noul": 0.2}}, {"node": node}
+
+    monkeypatch.setattr(nodes.jev, "ask", fake_ask)
+    routing = SimpleNamespace(rag_instructions="", sql_instructions="", web_instructions="")
+    ctx = SimpleNamespace(cfg=SimpleNamespace(routing=routing), kb_summary="kb", dataset_summary="tables")
+    decision, usage = await nodes._jev_route(ctx, "q", ["rag", "sql", "web_search"])  # type: ignore[arg-type]
+    assert decision["tools"] == ["rag", "sql"] and usage == {"node": "router"}
+    assert all(q["type"] == "noul" for q in sent.values())
