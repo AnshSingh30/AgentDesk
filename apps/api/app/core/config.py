@@ -64,6 +64,10 @@ class Settings(BaseSettings):
     gemini_api_key: str | None = None
     groq_api_key: str | None = None
     openrouter_api_key: str | None = None
+    # TypeSafe JEV: when set, the router and the SQL intent gate use it instead of the utility LLM
+    jev_api_key: str | None = None
+    jev_base_url: str = "https://api.typesafe.ai"
+    jev_model: str = "jev-latest"
     tavily_api_key: str | None = None
     llm_timeout_seconds: int = 60
     llm_concurrency_per_org: int = 10

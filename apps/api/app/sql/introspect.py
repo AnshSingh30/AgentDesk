@@ -39,6 +39,9 @@ SAMPLE_TYPES = (
     "name",
     "citext",
 )
+DATE_TYPES = ("date", "timestamp without time zone", "timestamp with time zone")
+NUMBER_TYPES = ("integer", "smallint", "bigint", "numeric", "real", "double precision")
+MAX_LISTED_VALUES = 30  # categorical columns up to this many distinct values are listed in full
 PG_SYSTEM_SCHEMAS = ("pg_catalog", "information_schema", "pg_toast")
 
 
@@ -152,13 +155,20 @@ async def introspect_postgres(
             elif not allow_sampling:
                 col["sample_note"] = "sampling disabled"
             elif col["enum_values"]:
-                col["samples"] = col["enum_values"][:5]
+                col["samples"] = col["enum_values"][:MAX_LISTED_VALUES]
+            elif (c["data_type"] or "").lower() in DATE_TYPES:
+                col["samples"] = await _pg_range(conn, c["table_schema"], c["table_name"], c["column_name"])
+            elif (c["data_type"] or "").lower() in NUMBER_TYPES:
+                if not col["is_pk"] and not c["column_name"].endswith("_id"):
+                    col["samples"] = await _pg_values(
+                        conn, c["table_schema"], c["table_name"], c["column_name"]
+                    )
             elif (c["data_type"] or "").lower() in SAMPLE_TYPES or (c["data_type"] == "USER-DEFINED"):
                 nd = n_distinct.get((c["table_schema"], c["table_name"], c["column_name"]))
                 if nd is None or 0 < nd <= 50 or (nd < 0 and nd > -0.05):
-                    col["samples"] = await _pg_sample(
+                    col["samples"] = await _pg_values(
                         conn, c["table_schema"], c["table_name"], c["column_name"]
-                    )
+                    ) or await _pg_sample(conn, c["table_schema"], c["table_name"], c["column_name"])
                 else:
                     col["sample_note"] = "sampling skipped (high cardinality)"
             entry["columns"].append(col)
@@ -180,6 +190,33 @@ async def introspect_postgres(
         return snapshot
     finally:
         await conn.close()
+
+
+async def _pg_values(conn: Any, schema: str, table: str, column: str) -> list[Any] | None:
+    """Every distinct value when the column has at most MAX_LISTED_VALUES of them, else None.
+
+    The model filters on these literals, so a complete list beats a 5-row sample. Whole-table scan under a
+    5s timeout. ponytail: one DISTINCT per column; switch to pg_stats.most_common_vals for very large tables.
+    """
+    c, t = quote_ident(column), f"{quote_ident(schema)}.{quote_ident(table)}"
+    q = f"SELECT DISTINCT {c} FROM {t} WHERE {c} IS NOT NULL ORDER BY 1 LIMIT {MAX_LISTED_VALUES + 1}"  # nosec B608 (quote_ident)
+    try:
+        await conn.execute("SET statement_timeout = '5s'")
+        rows = await conn.fetch(q)
+    except Exception:  # noqa: BLE001
+        return None
+    return [str(r[0])[:80] for r in rows] if len(rows) <= MAX_LISTED_VALUES else None
+
+
+async def _pg_range(conn: Any, schema: str, table: str, column: str) -> list[Any] | None:
+    """["range: <min> .. <max>"] so the model knows which periods the data covers."""
+    c, t = quote_ident(column), f"{quote_ident(schema)}.{quote_ident(table)}"
+    try:
+        await conn.execute("SET statement_timeout = '5s'")
+        row = await conn.fetchrow(f"SELECT min({c}), max({c}) FROM {t}")  # nosec B608 (quote_ident)
+    except Exception:  # noqa: BLE001
+        return None
+    return [f"range: {row[0]} .. {row[1]}"] if row and row[0] is not None else None
 
 
 async def _pg_sample(conn: Any, schema: str, table: str, column: str) -> list[Any] | None:

@@ -178,9 +178,3 @@ AgentDesk is source-available under the [Business Source License 1.1](LICENSE).
   release (the Change Date for the current version is 2030-09-19).
 
 For production licensing, open an issue.
-
-## Acknowledgements
-
-The Service API and annotation replies are modelled on [Dify](https://github.com/langgenius/dify). The
-project is built on FastAPI, LangGraph, LiteLLM, Qdrant, DuckDB, sqlglot, Next.js and
-text-embeddings-inference.
