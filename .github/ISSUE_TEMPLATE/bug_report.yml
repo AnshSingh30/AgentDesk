@@ -1,0 +1,26 @@
+name: Bug report
+description: Something is broken or behaves unexpectedly
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Include the steps to reproduce, what you expected and what you saw.
+    validations: { required: true }
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / request id
+      description: API responses include a `request_id`; paste it with the relevant log lines (remove secrets).
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit
+      placeholder: e.g. v0.2.0 or a git SHA
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [Builder / UI, Playground, Knowledge base / RAG, Datasets / SQL, WhatsApp, Service API, Evals, Setup / Docker, Other]

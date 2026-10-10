@@ -90,7 +90,7 @@ def fake_structured(
         m = re.search(r"^TABLE (\w+)", text, re.M)
         table = m.group(1) if m else "employees"
         return {
-            "sql": f"SELECT * FROM {table} LIMIT 10",
+            "sql": f"SELECT * FROM {table} LIMIT 10",  # nosec B608
             "explanation": "Demo query over the first exposed table.",
             "assumptions": ["demo model cannot write real SQL"],
         }

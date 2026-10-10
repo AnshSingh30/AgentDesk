@@ -47,12 +47,12 @@ jobs:
         with: { enable-cache: true }
       - run: uv python install 3.12 && uv sync --python 3.12
       - name: Lint & type-check
-        run: uv run ruff check . && uv run ruff format --check . && uv run mypy || true
+        run: uv run ruff check . && uv run ruff format --check . && uv run mypy
       - run: uv run alembic upgrade head
       - name: Unit + integration tests
         run: uv run pytest -q --cov=app --cov-report=term-missing --cov-fail-under=60
       - name: Security scans
-        run: uv run pip install bandit pip-audit >/dev/null && uv run bandit -q -r app -ll && uv run pip-audit --strict || true
+        run: uvx bandit -q -r app -ll && uv export --no-hashes --format requirements-txt > /tmp/req.txt && (uvx pip-audit -r /tmp/req.txt --no-deps --disable-pip || true)
   frontend:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: apps/web } }

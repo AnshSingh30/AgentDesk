@@ -13,6 +13,7 @@ from langgraph.types import interrupt
 from pydantic import BaseModel, Field
 
 from app.core.metrics import sql_attempts_total
+from app.llm import jev
 from app.llm.gateway import ResolvedModel, structured
 from app.sql.context import DatasetContext, select_tables, top_examples
 from app.sql.executor import SqlExecutionError, execute
@@ -92,22 +93,44 @@ def _usage(rm: ResolvedModel, chat: Any, node: str) -> dict[str, Any]:
 
 
 async def intent_check(state: SqlState, config: RunnableConfig) -> dict[str, Any]:
+    if state.get("intent") == "data_question":  # decided upstream by the router
+        return {"status": "ok"}
     rt = _rt(config)
     t0 = time.perf_counter()
-    prompt = (
-        f"Dataset tables: {', '.join(t.name for t in rt.ctx.tables)[:800]}\n"
-        f"User message: {state['question']}\n\nClassify: is this a question answerable with data from the dataset "
-        "(data_question), small talk/greeting (chit_chat), or unrelated (out_of_scope)?"
-    )
+    # Columns, not just table names: "most common exit reason" has no exits table, only employees.exit_reason.
+    tables = "; ".join(f"{t.name}({', '.join(c['name'] for c in t.columns)})" for t in rt.ctx.tables)[:4000]
     try:
-        res, chat = await structured(
-            rt.utility_model,
-            [{"role": "user", "content": prompt}],
-            IntentCheck,
-            max_tokens=50,
-            metadata=rt.metadata,
-        )
-        intent, usage = res.intent, [_usage(rt.utility_model, chat, "intent_check")]
+        if jev.enabled():
+            answers, jev_usage = await jev.ask(
+                {"user_message": state["question"], "dataset_tables": tables},
+                {
+                    "intent": {
+                        "type": "choice",
+                        "instructions": "What kind of message is this, given the tables and columns in the dataset?",
+                        "criteria": {
+                            "data_question": "Asks for facts, counts, lists or statistics that the dataset's columns can answer",
+                            "chit_chat": "Greeting, thanks or small talk that needs no data",
+                            "out_of_scope": "Asks for something the dataset's columns cannot answer",
+                        },
+                    }
+                },
+                node="intent_check",
+            )
+            intent, usage = answers["intent"]["choice"], [jev_usage]
+        else:
+            prompt = (
+                f"Dataset tables and columns: {tables}\n"
+                f"User message: {state['question']}\n\nClassify: is this a question answerable with data from "
+                "the dataset (data_question), small talk/greeting (chit_chat), or unrelated (out_of_scope)?"
+            )
+            res, chat = await structured(
+                rt.utility_model,
+                [{"role": "user", "content": prompt}],
+                IntentCheck,
+                max_tokens=50,
+                metadata=rt.metadata,
+            )
+            intent, usage = res.intent, [_usage(rt.utility_model, chat, "intent_check")]
     except Exception as e:  # noqa: BLE001 - default to trying SQL
         log.warning("intent_check_failed", error=str(e))
         intent, usage = "data_question", []
@@ -130,11 +153,52 @@ def _gen_prompt(rt: SqlRuntime, state: SqlState) -> list[dict[str, str]]:
     ctx = rt.ctx
     examples = top_examples(ctx, state["question"])
     ex_text = "\n".join(f"Q: {e['question']}\nSQL: {e['sql']}" for e in examples)
+    # Structured for gpt-5.4-mini: critical rules first, explicit steps, explicit ambiguity policy.
+    pitfalls = (
+        "<postgres_pitfalls>\n"
+        "- date - date is an integer number of days: divide it directly (/ 365.25 for years); "
+        "never EXTRACT(DAY FROM date - date).\n"
+        "- Cast before ROUND: ROUND(x::numeric, 2). Use NULLIF(denominator, 0) in ratios and 100.0 * for percentages.\n"
+        "- Use COUNT(*) FILTER (WHERE ...) for several conditional counts in one pass.\n"
+        "</postgres_pitfalls>\n\n"
+        if ctx.dialect == "postgres"
+        else ""
+    )
     system = (
-        f"You write a single read-only {ctx.dialect.upper()} SELECT query to answer the user's question using ONLY the tables below.\n"
-        f"Rules: one statement; no DDL/DML; only listed tables and columns; qualify columns when joining; "
-        f"add LIMIT {rt.max_rows} unless aggregating; use ISO dates; today's date is {datetime.now(UTC).date().isoformat()}.\n"
-        "If the question is ambiguous about a period, assume the last 12 months and say so in assumptions.\n\n"
+        f"You translate one business question into ONE read-only {ctx.dialect.upper()} SELECT over the schema below.\n\n"
+        "<rules>\n"
+        "- Use only the tables and columns listed in SCHEMA; never invent any.\n"
+        "- If the question also asks something that is not in the data (e.g. what a policy says), answer only the "
+        "data part; another tool covers the rest.\n"
+        "- If the data part itself needs a column that is not in SCHEMA (it may be hidden for privacy or not exist), "
+        "return an empty sql and say what is missing in explanation. Never stand in another column or a constant.\n"
+        "- Compare categorical columns only against the values listed for them (exact spelling and case).\n"
+        "- One statement, no DDL/DML, no comments, no trailing semicolon. Qualify columns with aliases when joining.\n"
+        f"- Add LIMIT {rt.max_rows} unless the query returns a single aggregated row.\n"
+        "- Select only the columns needed to answer, with short readable aliases (e.g. active_employees).\n"
+        "- Never put literal values in the SELECT list for facts that are not in the data (e.g. policy entitlements); "
+        "leave that part out, another tool answers it.\n"
+        "</rules>\n\n"
+        "<steps>\n"
+        "1. Identify the metric, the filters (status, type, department, city...) and the time period.\n"
+        "2. Map each to a SCHEMA column; use the listed values and date ranges to pick exact literals and periods.\n"
+        "3. Take joins from RELATIONSHIPS. Apply a BUSINESS GLOSSARY definition when its term appears.\n"
+        "4. Write the query, then check every table, column and filter literal against SCHEMA.\n"
+        "</steps>\n\n"
+        "<ambiguity>\n"
+        "- 'current', 'now', 'currently', 'active' and headcount mean rows whose status marks them current; "
+        "no date filter.\n"
+        "- A year or month in the question is a calendar period on the matching date column, "
+        "e.g. hire_date >= '2025-01-01' AND hire_date < '2026-01-01'.\n"
+        "- Only for a trend or rate with no period at all, use the last 12 months and say so in assumptions.\n"
+        f"- Today's date is {datetime.now(UTC).date().isoformat()}.\n"
+        "</ambiguity>\n\n"
+        f"{pitfalls}"
+        "<output_contract>\n"
+        "- sql: the query only.\n"
+        "- explanation: one plain-language sentence saying what was counted and which filters were used.\n"
+        "- assumptions: interpretations you made (empty list if none).\n"
+        "</output_contract>\n\n"
         f"SCHEMA:\n{ctx.schema_text(state.get('selected_tables'))}\n"
     )
     if ex_text:
@@ -150,7 +214,8 @@ def _gen_prompt(rt: SqlRuntime, state: SqlState) -> list[dict[str, str]]:
         last = attempts[-1]
         user += (
             f"\n\nYour previous SQL:\n{last.get('sql')}\nfailed with: {last.get('error')}\n"
-            "Fix the query. Check table/column names, joins and filters."
+            "Fix the query: re-check table and column names against SCHEMA, the join path, filter literals and "
+            "date arithmetic. Return a corrected query, not the same one."
         )
     messages.append({"role": "user", "content": user})
     return messages
@@ -176,6 +241,8 @@ async def generate_sql(state: SqlState, config: RunnableConfig) -> dict[str, Any
         }
     return {
         "sql": res.sql.strip(),
+        # empty sql = the model judged the data unavailable (missing or hidden column): stop, don't approximate
+        **({"status": "not_data"} if not res.sql.strip() else {}),
         "explanation": res.explanation,
         "assumptions": res.assumptions,
         "usage": list(state.get("usage") or []) + [_usage(rt.main_model, chat, "generate_sql")],
@@ -264,6 +331,8 @@ def _after_intent(state: SqlState) -> str:
 
 
 def _after_validate(state: SqlState, config: RunnableConfig) -> str:
+    if state.get("status") == "not_data":
+        return END
     if state.get("validated_sql"):
         return "confirm"
     return "generate_sql" if len(state.get("attempts") or []) < _rt(config).max_attempts else "fail"
@@ -319,7 +388,7 @@ def build_sql_graph() -> Any:
     g.add_conditional_edges(
         "validate_sql",
         _after_validate,
-        {"confirm": "confirm", "generate_sql": "generate_sql", "fail": "fail"},
+        {"confirm": "confirm", "generate_sql": "generate_sql", "fail": "fail", END: END},
     )
     g.add_conditional_edges("confirm", _after_confirm, {"execute_sql": "execute_sql", END: END})
     g.add_conditional_edges(

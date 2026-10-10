@@ -48,5 +48,6 @@ providers:
 
 embedding_models:
   - { id: fastembed/BAAI/bge-small-en-v1.5, display: "bge-small-en (local, 384d)", dim: 384, provider: local }
+  - { id: openai/BAAI/bge-base-en-v1.5, display: "bge-base-en (self-hosted TEI, 768d)", dim: 768, provider: local }
   - { id: text-embedding-3-small, display: "OpenAI text-embedding-3-small (1536d)", dim: 1536, provider: openai }
   - { id: text-embedding-3-large, display: "OpenAI text-embedding-3-large (3072d)", dim: 3072, provider: openai }

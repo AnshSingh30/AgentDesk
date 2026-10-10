@@ -2,6 +2,7 @@
 name = "agentdesk-api"
 version = "0.1.0"
 description = "AgentDesk API, WhatsApp webhook and worker services"
+license = "BUSL-1.1"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "fastapi>=0.141",

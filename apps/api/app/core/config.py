@@ -55,11 +55,19 @@ class Settings(BaseSettings):
     default_chat_model: str = "fake/chat"
     default_utility_model: str = ""
     default_embedding_model: str = "fastembed/BAAI/bge-small-en-v1.5"
+    # Optional OpenAI-compatible base URLs for the platform models (vLLM, Ollama, TEI, LiteLLM proxy...).
+    # Only applied to `openai/...` model strings; the key comes from OPENAI_API_KEY.
+    default_llm_api_base: str | None = None
+    embedding_api_base: str | None = None
     openai_api_key: str | None = None
     anthropic_api_key: str | None = None
     gemini_api_key: str | None = None
     groq_api_key: str | None = None
     openrouter_api_key: str | None = None
+    # TypeSafe JEV: when set, the router and the SQL intent gate use it instead of the utility LLM
+    jev_api_key: str | None = None
+    jev_base_url: str = "https://api.typesafe.ai"
+    jev_model: str = "jev-latest"
     tavily_api_key: str | None = None
     llm_timeout_seconds: int = 60
     llm_concurrency_per_org: int = 10

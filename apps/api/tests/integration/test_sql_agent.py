@@ -7,6 +7,7 @@ import sys
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
+from urllib.parse import urlparse
 
 import asyncpg
 import pytest
@@ -50,8 +51,8 @@ async def hr_dataset() -> tuple[uuid.UUID, uuid.UUID, uuid.UUID]:
             status="introspecting",
             allow_sampling=True,
             connection_config={
-                "host": "localhost",
-                "port": 5434,
+                "host": urlparse(HR_URL).hostname,
+                "port": urlparse(HR_URL).port or 5432,
                 "database": "hr_demo",
                 "username": "hr_demo",
                 "sslmode": "disable",

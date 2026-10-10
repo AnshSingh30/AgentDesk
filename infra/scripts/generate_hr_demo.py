@@ -395,6 +395,6 @@ CREATE INDEX ON candidates(opening_id); CREATE INDEX ON compensation(employee_id
 
 if __name__ == "__main__":
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(generate())
+    OUT.write_text(generate(), encoding="utf-8", newline="\n")
     print(f"wrote {OUT} ({OUT.stat().st_size // 1024} KB)")
     sys.exit(0)

@@ -1,98 +1,1266 @@
 {
  "template": "hr_onboarding",
- "model": "fake/chat",
- "cases": 8,
- "route_accuracy": 0.875,
- "fact_accuracy": 0.0,
- "run_at": "2026-09-16T17:19:16.366069+00:00",
+ "model": "azure/gpt-5.4-mini",
+ "utility_model": "azure/gpt-5.4-mini",
+ "judge_model": "azure/gpt-5.4-mini",
+ "embedding_model": "openai/BAAI/bge-base-en-v1.5",
+ "cases": 34,
+ "passed": 33,
+ "metrics": {
+  "route_accuracy": 1.0,
+  "fact_accuracy": 1.0,
+  "groundedness": 0.968,
+  "sql_first_try": null,
+  "sql_with_retries": null,
+  "no_answer_accuracy": 1.0,
+  "privacy": null,
+  "latency_p50_ms": 1259,
+  "latency_p95_ms": 3836,
+  "avg_tokens": 1383
+ },
+ "usage": {
+  "agent": {
+   "input_tokens": 45105,
+   "output_tokens": 1917,
+   "cost_usd": 0.039864
+  },
+  "judge": {
+   "input_tokens": 28410,
+   "output_tokens": 540,
+   "cost_usd": 0.023737
+  },
+  "agent_cost_by_node": {
+   "generate_answer (gpt-5.4-mini)": 0.039864,
+   "rag_retrieve (query)": 0.0
+  }
+ },
+ "run_at": "2026-10-10T17:08:29+00:00",
  "results": [
   {
    "question": "How many casual leaves do I get per year?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
    "route": [
     "rag"
    ],
-   "route_ok": true,
-   "facts_ok": false,
-   "no_answer_ok": null,
+   "sql": [],
+   "answer": "You get **12 casual leaves per calendar year**. They are **credited at 1 day per month**, **cannot be carried forward**, and are **not encashable**. Casual leave can also be taken as **half days**.  \n\n**Policy used:** *Leave Policy* (page 1), section **2. Casual leave** [1]",
+   "unsupported_claims": [],
    "error": null,
-   "latency_ms": 11
+   "latency_ms": 3838,
+   "tokens": 1369,
+   "agent_usage": {
+    "input_tokens": 1293,
+    "output_tokens": 76,
+    "cost_usd": 0.001312
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001312
+   },
+   "judge_usage": {
+    "input_tokens": 899,
+    "output_tokens": 17,
+    "cost_usd": 0.00075075
+   }
   },
   {
    "question": "Can casual leave be carried forward?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
    "route": [
     "rag"
    ],
-   "route_ok": true,
-   "facts_ok": false,
-   "no_answer_ok": null,
+   "sql": [],
+   "answer": "No. Casual leave cannot be carried forward; it lapses on 31 December and is not encashable. The Leave Policy, page 1, section 1 \u201cLeave entitlements\u201d and section 2 \u201cCasual leave\u201d says CL has no carry-forward.",
+   "unsupported_claims": [],
    "error": null,
-   "latency_ms": 7
+   "latency_ms": 3837,
+   "tokens": 1348,
+   "agent_usage": {
+    "input_tokens": 1290,
+    "output_tokens": 58,
+    "cost_usd": 0.001228
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001228
+   },
+   "judge_usage": {
+    "input_tokens": 878,
+    "output_tokens": 17,
+    "cost_usd": 0.000735
+   }
   },
   {
    "question": "What is the notice period for employees?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
    "route": [
     "rag"
    ],
-   "route_ok": true,
-   "facts_ok": false,
-   "no_answer_ok": null,
+   "sql": [],
+   "answer": "**Policy used:** *Employee Handbook.pdf* \u2014 **\u201c3. Probation, notice period and exit\u201d** (page 1)\n\n- **After probation:** 60 days\n- **During probation:** 15 days\n\n- Notice must be given **in writing through the People Portal**.\n- The last working day is agreed with your manager.",
+   "unsupported_claims": [],
    "error": null,
-   "latency_ms": 6
+   "latency_ms": 3616,
+   "tokens": 1460,
+   "agent_usage": {
+    "input_tokens": 1386,
+    "output_tokens": 74,
+    "cost_usd": 0.000509
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.000509
+   },
+   "judge_usage": {
+    "input_tokens": 986,
+    "output_tokens": 17,
+    "cost_usd": 0.000816
+   }
+  },
+  {
+   "question": "What is the notice period during probation?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The notice period **during probation is 15 days**. This is stated in **Employee Handbook, page 1, section 3 \u201cProbation, notice period and exit\u201d** [1].\n\n- After probation, the notice period is **60 days** [1]\n- Notice must be given **in writing through the People Portal** [1]\n\nIf you want, I can also share the exit steps from the same policy.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3836,
+   "tokens": 1598,
+   "agent_usage": {
+    "input_tokens": 1508,
+    "output_tokens": 90,
+    "cost_usd": 0.001536
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001536
+   },
+   "judge_usage": {
+    "input_tokens": 1128,
+    "output_tokens": 17,
+    "cost_usd": 0.0009225
+   }
+  },
+  {
+   "question": "How long is the probation period?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The probation period is **90 days**. This is stated in the **Employee Handbook, page 1** under **\u201c3. Probation, notice period and exit.\u201d**",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1122,
+   "tokens": 1480,
+   "agent_usage": {
+    "input_tokens": 1441,
+    "output_tokens": 39,
+    "cost_usd": 0.000392
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.000392
+   },
+   "judge_usage": {
+    "input_tokens": 1010,
+    "output_tokens": 17,
+    "cost_usd": 0.000834
+   }
   },
   {
    "question": "How many days a week can I work from home?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
    "route": [
     "rag"
    ],
-   "route_ok": true,
-   "facts_ok": false,
-   "no_answer_ok": null,
+   "sql": [],
+   "answer": "You can work from home up to **2 days per week**. WFH days should be agreed with your manager at the start of each month and recorded in the People Portal. Teams must keep **Tuesday as a common office day**. If you need more than 2 WFH days in a week, you need **department head approval**.\n\n**Policy used:** *Work From Home & Travel Policy* (page 1) [1]",
+   "unsupported_claims": [],
    "error": null,
-   "latency_ms": 6
+   "latency_ms": 1264,
+   "tokens": 1525,
+   "agent_usage": {
+    "input_tokens": 1432,
+    "output_tokens": 93,
+    "cost_usd": 0.001493
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001493
+   },
+   "judge_usage": {
+    "input_tokens": 1055,
+    "output_tokens": 17,
+    "cost_usd": 0.00086775
+   }
+  },
+  {
+   "question": "Which day do teams need to be in the office?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Teams must keep **Tuesday** as a common office day. This is from the **Work From Home & Travel Policy, page 1** [1].",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1175,
+   "tokens": 1447,
+   "agent_usage": {
+    "input_tokens": 1413,
+    "output_tokens": 34,
+    "cost_usd": 0.001213
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001213
+   },
+   "judge_usage": {
+    "input_tokens": 976,
+    "output_tokens": 17,
+    "cost_usd": 0.0008085
+   }
   },
   {
    "question": "Is 2 October a holiday?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
    "route": [
     "rag"
    ],
-   "route_ok": true,
-   "facts_ok": false,
-   "no_answer_ok": null,
+   "sql": [],
+   "answer": "Yes \u2014 **2 October 2026** is a public holiday (**Gandhi Jayanti**) in Northwind Tech\u2019s **Holiday Calendar 2026** (page 1). [1]\n\n- It is one of the 12 public holidays observed across all India offices. [1]\n- Related leave policy: **Leave Policy**, section **5. Public holidays** (page 1). [3]",
+   "unsupported_claims": [],
    "error": null,
-   "latency_ms": 7
+   "latency_ms": 1341,
+   "tokens": 1388,
+   "agent_usage": {
+    "input_tokens": 1302,
+    "output_tokens": 86,
+    "cost_usd": 0.001364
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001364
+   },
+   "judge_usage": {
+    "input_tokens": 914,
+    "output_tokens": 17,
+    "cost_usd": 0.000762
+   }
   },
   {
    "question": "What's the health insurance cover amount?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
    "route": [
     "rag"
    ],
-   "route_ok": true,
-   "facts_ok": false,
-   "no_answer_ok": null,
+   "sql": [],
+   "answer": "**Benefits Summary (page 1)**\n\n- **Group health insurance cover:** **Rs. 5,00,000 per year** for the employee, spouse, and up to 2 children. [1]\n\nIf you want, I can also share how to claim it from the policy.",
+   "unsupported_claims": [],
    "error": null,
-   "latency_ms": 7
+   "latency_ms": 1296,
+   "tokens": 1383,
+   "agent_usage": {
+    "input_tokens": 1320,
+    "output_tokens": 63,
+    "cost_usd": 0.001273
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001273
+   },
+   "judge_usage": {
+    "input_tokens": 911,
+    "output_tokens": 17,
+    "cost_usd": 0.00075975
+   }
   },
   {
    "question": "Who do I contact for laptop issues?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
    "route": [
     "rag"
    ],
-   "route_ok": true,
-   "facts_ok": false,
-   "no_answer_ok": null,
+   "sql": [],
+   "answer": "For **laptop issues**, contact the **IT helpdesk**:\n\n- **Email:** it-helpdesk@northwind.example\n- **Slack:** `#it-helpdesk`\n- **Hours:** Mon-Sat 08:00-20:00\n\n**Policy used:** *IT Onboarding Guide* \u2014 \u201cGetting help\u201d [1]",
+   "unsupported_claims": [],
    "error": null,
-   "latency_ms": 7
+   "latency_ms": 1118,
+   "tokens": 1241,
+   "agent_usage": {
+    "input_tokens": 1168,
+    "output_tokens": 73,
+    "cost_usd": 0.001205
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001205
+   },
+   "judge_usage": {
+    "input_tokens": 775,
+    "output_tokens": 17,
+    "cost_usd": 0.00065775
+   }
+  },
+  {
+   "question": "How many sick leaves do I get?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "You get **8 sick leaves per year**. Sick leave does **not** carry forward, and a **medical certificate is required for absences of more than 2 consecutive days**.  \n**Policy used:** *Leave Policy* (page 1), section **3. Sick leave** [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1134,
+   "tokens": 1267,
+   "agent_usage": {
+    "input_tokens": 1202,
+    "output_tokens": 65,
+    "cost_usd": 0.001194
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001194
+   },
+   "judge_usage": {
+    "input_tokens": 797,
+    "output_tokens": 17,
+    "cost_usd": 0.0006742499999999999
+   }
+  },
+  {
+   "question": "When do I need a medical certificate for sick leave?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "**Policy used:** *Leave Policy* (page 1), section **3. Sick leave**.\n\nYou need a **medical certificate for sick leave absences of more than 2 consecutive days**. [1]\n\nIf you want, I can also share the sick leave entitlement and carry-forward rules from the same policy.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 973,
+   "tokens": 1419,
+   "agent_usage": {
+    "input_tokens": 1351,
+    "output_tokens": 68,
+    "cost_usd": 0.001319
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001319
+   },
+   "judge_usage": {
+    "input_tokens": 949,
+    "output_tokens": 17,
+    "cost_usd": 0.00078825
+   }
+  },
+  {
+   "question": "How much earned leave can I carry forward?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "You can carry forward **up to 30 days of earned leave**. Earned leave beyond that cap lapses.  \n**Policy used:** *Leave Policy* (page 1), section **1. Leave entitlements**.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1255,
+   "tokens": 1342,
+   "agent_usage": {
+    "input_tokens": 1292,
+    "output_tokens": 50,
+    "cost_usd": 0.001194
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001194
+   },
+   "judge_usage": {
+    "input_tokens": 872,
+    "output_tokens": 17,
+    "cost_usd": 0.0007305
+   }
+  },
+  {
+   "question": "How much paternity leave is there?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "**Paternity leave** is **10 working days**. This is listed in the **Leave Policy, page 1**. [3]\n\nIf you want, I can also share the related leave application steps from the same policy.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1181,
+   "tokens": 1341,
+   "agent_usage": {
+    "input_tokens": 1291,
+    "output_tokens": 50,
+    "cost_usd": 0.001193
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001193
+   },
+   "judge_usage": {
+    "input_tokens": 871,
+    "output_tokens": 17,
+    "cost_usd": 0.0007297499999999999
+   }
+  },
+  {
+   "question": "How long is maternity leave?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Maternity leave is **26 weeks**. This is listed in the **Leave Policy, page 1**. [3]\n\nIf you want, I can also summarize the other leave types from the same policy.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1225,
+   "tokens": 1335,
+   "agent_usage": {
+    "input_tokens": 1289,
+    "output_tokens": 46,
+    "cost_usd": 0.001174
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001174
+   },
+   "judge_usage": {
+    "input_tokens": 865,
+    "output_tokens": 17,
+    "cost_usd": 0.00072525
+   }
+  },
+  {
+   "question": "What is my annual learning budget?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Your annual learning budget is **Rs. 40,000** for courses, books, and conferences, subject to manager approval. This is listed in **Employee Handbook, page 2, section 10 \u201cLearning and development\u201d** [1].",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1284,
+   "tokens": 1510,
+   "agent_usage": {
+    "input_tokens": 1457,
+    "output_tokens": 53,
+    "cost_usd": 0.000467
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.000467
+   },
+   "judge_usage": {
+    "input_tokens": 1040,
+    "output_tokens": 17,
+    "cost_usd": 0.0008565
+   }
+  },
+  {
+   "question": "Is there an allowance for a home office setup?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Yes \u2014 the **Work From Home & Travel Policy** (page 1) says there is a **one-time home office allowance of Rs. 15,000** for a **desk, chair, or monitor**, available **after probation**. Claims are submitted via the **Expenses app** with invoices. [1]\n\nIf you want, I can also share the related WFH rules from the same policy.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1279,
+   "tokens": 1438,
+   "agent_usage": {
+    "input_tokens": 1352,
+    "output_tokens": 86,
+    "cost_usd": 0.001401
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001401
+   },
+   "judge_usage": {
+    "input_tokens": 967,
+    "output_tokens": 17,
+    "cost_usd": 0.0008017499999999999
+   }
+  },
+  {
+   "question": "What's the hotel cap per night for L4-L5 employees?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "According to the **WFH and Travel Policy** (page 1), the **hotel cap per night for L4\u2013L5 employees is Rs. 6,500** [1].",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 951,
+   "tokens": 1369,
+   "agent_usage": {
+    "input_tokens": 1327,
+    "output_tokens": 42,
+    "cost_usd": 0.001184
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001184
+   },
+   "judge_usage": {
+    "input_tokens": 899,
+    "output_tokens": 17,
+    "cost_usd": 0.00075075
+   }
+  },
+  {
+   "question": "What is the per diem for L6+ on business travel?",
+   "passed": false,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": false
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The **WFH and Travel Policy** on **page 1** says the **per diem for L6+** business travel is **Rs. 2,500**.",
+   "unsupported_claims": [
+    "The WFH and Travel Policy is on page 1."
+   ],
+   "error": null,
+   "latency_ms": 970,
+   "tokens": 1513,
+   "agent_usage": {
+    "input_tokens": 1474,
+    "output_tokens": 39,
+    "cost_usd": 0.001281
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001281
+   },
+   "judge_usage": {
+    "input_tokens": 1041,
+    "output_tokens": 30,
+    "cost_usd": 0.00091575
+   }
+  },
+  {
+   "question": "Can I accept a gift from a supplier?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "**Code of Conduct, page 1** says gifts above **Rs. 2,000** from suppliers or customers must be **declined or declared to your manager**. [1]\n\n- If the gift is **above Rs. 2,000**: decline it or tell your manager.\n- If you\u2019re unsure, check with your manager or HR: **hr@northwind.example**. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1427,
+   "tokens": 1327,
+   "agent_usage": {
+    "input_tokens": 1239,
+    "output_tokens": 88,
+    "cost_usd": 0.001325
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001325
+   },
+   "judge_usage": {
+    "input_tokens": 857,
+    "output_tokens": 17,
+    "cost_usd": 0.00071925
+   }
+  },
+  {
+   "question": "When is the Diwali holiday this year?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Diwali is on **9 November 2026 (Monday)**, and **Diwali (day 2)** is on **10 November 2026 (Tuesday)**.  \nSource: **Holiday Calendar 2026**, page 1.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1217,
+   "tokens": 1394,
+   "agent_usage": {
+    "input_tokens": 1342,
+    "output_tokens": 52,
+    "cost_usd": 0.001241
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001241
+   },
+   "judge_usage": {
+    "input_tokens": 920,
+    "output_tokens": 17,
+    "cost_usd": 0.0007664999999999999
+   }
+  },
+  {
+   "question": "How many public holidays does Northwind observe?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Northwind observes **12 public holidays per year**. This is stated in the **Leave Policy, page 1** under **\u201c5. Public holidays\u201d**.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1130,
+   "tokens": 1353,
+   "agent_usage": {
+    "input_tokens": 1316,
+    "output_tokens": 37,
+    "cost_usd": 0.001154
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001154
+   },
+   "judge_usage": {
+    "input_tokens": 881,
+    "output_tokens": 17,
+    "cost_usd": 0.00073725
+   }
+  },
+  {
+   "question": "When is the new joiner welcome session?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The **Northwind Welcome session** is held **every Friday at 11:00** in the **Town Hall room or on Zoom**. This is listed in the **Employee Handbook, page 2** under **\u201c11. First-week checklist for new joiners.\u201d** [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1274,
+   "tokens": 1473,
+   "agent_usage": {
+    "input_tokens": 1411,
+    "output_tokens": 62,
+    "cost_usd": 0.001337
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001337
+   },
+   "judge_usage": {
+    "input_tokens": 1002,
+    "output_tokens": 17,
+    "cost_usd": 0.000828
+   }
+  },
+  {
+   "question": "How quickly must I report a lost laptop?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Report a lost or stolen laptop **within 2 hours** to **it-helpdesk@northwind.example** and call **+91 80 4000 1234**.  \n**Policy used:** *IT Onboarding Guide* (Getting help) [1] and *Employee Handbook* (9. Information security, page 2) [2].",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1361,
+   "tokens": 1369,
+   "agent_usage": {
+    "input_tokens": 1293,
+    "output_tokens": 76,
+    "cost_usd": 0.001312
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001312
+   },
+   "judge_usage": {
+    "input_tokens": 902,
+    "output_tokens": 17,
+    "cost_usd": 0.000753
+   }
+  },
+  {
+   "question": "What is the minimum password length?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The minimum password length is **14 characters**.  \nSource: **IT Onboarding Guide, \u201cPasswords\u201d** [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1345,
+   "tokens": 1174,
+   "agent_usage": {
+    "input_tokens": 1145,
+    "output_tokens": 29,
+    "cost_usd": 0.000989
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.000989
+   },
+   "judge_usage": {
+    "input_tokens": 710,
+    "output_tokens": 17,
+    "cost_usd": 0.000609
+   }
+  },
+  {
+   "question": "When is salary paid each month?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Salary is paid on the **last working day of each month** into the bank account registered in the **People Portal**.  \n**Policy used:** *Employee Handbook*, page 1, section **6. Compensation and payroll** [1]\n\nIf you want, I can also share where to find payslips and payroll contact details.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1128,
+   "tokens": 1393,
+   "agent_usage": {
+    "input_tokens": 1322,
+    "output_tokens": 71,
+    "cost_usd": 0.001311
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001311
+   },
+   "judge_usage": {
+    "input_tokens": 923,
+    "output_tokens": 17,
+    "cost_usd": 0.00076875
+   }
+  },
+  {
+   "question": "What are the core working hours?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The core working hours are **10:00 to 16:00 IST**. This is from the **Employee Handbook, page 1** (\u201cWorking hours and attendance\u201d) [1].\n\nIf you want, I can also share the standard weekly working time and attendance rules from the same policy.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1318,
+   "tokens": 1397,
+   "agent_usage": {
+    "input_tokens": 1335,
+    "output_tokens": 62,
+    "cost_usd": 0.00128
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.00128
+   },
+   "judge_usage": {
+    "input_tokens": 927,
+    "output_tokens": 17,
+    "cost_usd": 0.00077175
+   }
+  },
+  {
+   "question": "How much is the monthly meal card?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The **Meal card** is **Rs. 2,200 per month**. **Policy used:** *Benefits Summary* (page 1) [1].",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1494,
+   "tokens": 1305,
+   "agent_usage": {
+    "input_tokens": 1269,
+    "output_tokens": 36,
+    "cost_usd": 0.001114
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001114
+   },
+   "judge_usage": {
+    "input_tokens": 834,
+    "output_tokens": 17,
+    "cost_usd": 0.0007019999999999999
+   }
+  },
+  {
+   "question": "How long does it take to investigate a Speak Up report?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The **Code of Conduct** says Speak Up reports are investigated within **10 working days**. [1]\n\nIf you want, I can also share the Speak Up contact details from the **Useful contacts** section.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1371,
+   "tokens": 1425,
+   "agent_usage": {
+    "input_tokens": 1379,
+    "output_tokens": 46,
+    "cost_usd": 0.001241
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001241
+   },
+   "judge_usage": {
+    "input_tokens": 957,
+    "output_tokens": 17,
+    "cost_usd": 0.00079425
+   }
+  },
+  {
+   "question": "What's the health insurance helpline number?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "**Policy used:** *Benefits Summary* (page 1) and *Benefits Summary* (page 1, \u201cHow to claim health insurance\u201d)\n\nThe health insurance helpline number is **1800-000-1234**.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 830,
+   "tokens": 1222,
+   "agent_usage": {
+    "input_tokens": 1171,
+    "output_tokens": 51,
+    "cost_usd": 0.001108
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001108
+   },
+   "judge_usage": {
+    "input_tokens": 751,
+    "output_tokens": 17,
+    "cost_usd": 0.00063975
+   }
+  },
+  {
+   "question": "How many optional holidays can I choose?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "You can choose **2 optional (restricted) holidays** from the restricted list. This is stated in the **Leave Policy, page 1** and the **Holiday Calendar 2026, page 1**. [1][2]\n\nIf you want, I can also list the available restricted holidays for 2026.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1304,
+   "tokens": 1387,
+   "agent_usage": {
+    "input_tokens": 1319,
+    "output_tokens": 68,
+    "cost_usd": 0.001295
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001295
+   },
+   "judge_usage": {
+    "input_tokens": 913,
+    "output_tokens": 17,
+    "cost_usd": 0.00076125
+   }
   },
   {
    "question": "What's the capital of France?",
+   "passed": true,
+   "checks": {
+    "route": null,
+    "facts": null,
+    "no_answer": true,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": null
+   },
    "route": [
     "rag"
    ],
-   "route_ok": false,
-   "facts_ok": null,
-   "no_answer_ok": true,
+   "sql": [],
+   "answer": "I couldn't find that in our HR documents. Please reach out to the HR team for help.",
+   "unsupported_claims": [],
    "error": null,
-   "latency_ms": 7
+   "latency_ms": 1003,
+   "tokens": 1271,
+   "agent_usage": {
+    "input_tokens": 1263,
+    "output_tokens": 8,
+    "cost_usd": 0.000983
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.000983
+   },
+   "judge_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0
+   }
+  },
+  {
+   "question": "What is Northwind's current share price?",
+   "passed": true,
+   "checks": {
+    "route": null,
+    "facts": null,
+    "no_answer": true,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": null
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "I couldn't find that in our HR documents. Please reach out to the HR team for help.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 941,
+   "tokens": 1307,
+   "agent_usage": {
+    "input_tokens": 1269,
+    "output_tokens": 38,
+    "cost_usd": 0.001123
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001123
+   },
+   "judge_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0
+   }
+  },
+  {
+   "question": "Write me a Python script that sorts a list.",
+   "passed": true,
+   "checks": {
+    "route": null,
+    "facts": null,
+    "no_answer": true,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": null
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "I couldn't find that in our HR documents. Please reach out to the HR team for help.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1001,
+   "tokens": 1452,
+   "agent_usage": {
+    "input_tokens": 1444,
+    "output_tokens": 8,
+    "cost_usd": 0.001119
+   },
+   "cost_by_node": {
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001119
+   },
+   "judge_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0
+   }
   }
  ]
 }

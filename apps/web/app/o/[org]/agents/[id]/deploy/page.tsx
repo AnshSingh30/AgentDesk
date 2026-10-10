@@ -16,6 +16,7 @@ import { useParams } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
 
+import { ApiAccessCard } from "@/components/api-access";
 import { ConfirmDialog, CopyButton, PageHeader } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import {
@@ -118,8 +119,8 @@ export default function DeployPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={`${agent.data?.name ?? "Agent"} · Deploy to WhatsApp`}
-        description="Connect your WhatsApp Cloud API number to a published version."
+        title={`${agent.data?.name ?? "Agent"} · Deploy`}
+        description="Connect a WhatsApp Cloud API number to a published version, or call it from your backend with the Service API."
       />
       {noVersion ? (
         <Alert variant="warning">Publish a version from the builder before deploying.</Alert>
@@ -234,6 +235,7 @@ export default function DeployPage() {
           </CardContent>
         </Card>
       ) : null}
+      {can("admin") ? <ApiAccessCard orgId={orgId} agentId={id} published={!noVersion} /> : null}
     </div>
   );
 }

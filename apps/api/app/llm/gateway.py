@@ -58,6 +58,12 @@ class LLMError(Exception):
         super().__init__(f"{code}: {message}")
 
 
+# An empty completion is a provider failure (proxy/upstream error returned as 200), not a real answer;
+# surfacing it keeps outages from being reported to users as "not in your documents".
+def _empty_response() -> LLMError:
+    return LLMError("provider_error", "The model returned an empty response", retryable=True)
+
+
 @dataclass
 class ResolvedModel:
     model: str
@@ -117,14 +123,22 @@ def _split(model_string: str) -> tuple[str, str]:
     return "openai", model_string
 
 
-def platform_model(utility: bool = False) -> ResolvedModel:
-    provider, model_id = _split(settings.utility_model if utility else settings.default_chat_model)
+def _platform_base(provider: str) -> str | None:
+    return settings.default_llm_api_base if provider == "openai" else None
+
+
+def platform_model(utility: bool = False, model_string: str | None = None) -> ResolvedModel:
+    """Platform-keyed model; `model_string` overrides the configured default (e.g. an eval judge)."""
+    provider, model_id = _split(
+        model_string or (settings.utility_model if utility else settings.default_chat_model)
+    )
     info = model_info(provider, model_id) or {}
     return ResolvedModel(
         model=f"{PREFIXES[provider]}{model_id}",
         provider=provider,
         credential_mode="platform",
         api_key=_platform_key(provider),
+        api_base=_platform_base(provider),
         context_window=info.get("context", 128_000),
         supports_tools=info.get("supports_tools", True),
         supports_json=info.get("supports_json_schema", True),
@@ -149,6 +163,7 @@ async def resolve_model(
                 provider=u_provider,
                 credential_mode="platform",
                 api_key=_platform_key(u_provider),
+                api_base=_platform_base(u_provider),
             )
         return rm
     cred: ProviderCredential | None = None
@@ -303,10 +318,17 @@ async def chat(
         kw["response_format"] = response_format
     try:
         resp = await litellm.acompletion(**kw)
+        if "response_format" in kw and not resp.choices[0].message.content:
+            # Some OpenAI-compatible servers return an empty body for JSON mode; the prompt already
+            # asks for JSON and callers validate it, so retry once without the flag.
+            kw.pop("response_format")
+            resp = await litellm.acompletion(**kw)
     except Exception as e:  # noqa: BLE001
         raise map_exception(e) from e
     usage = _usage_from(resp)
     choice = resp.choices[0]
+    if not choice.message.content:
+        raise _empty_response()
     return ChatResult(
         content=choice.message.content or "",
         usage=usage,
@@ -367,6 +389,8 @@ async def stream_chat(
     except Exception as e:  # noqa: BLE001
         raise map_exception(e) from e
     content = "".join(parts)
+    if not content:
+        raise _empty_response()
     if usage.input_tokens == 0 and usage.output_tokens == 0:
         try:
             usage = Usage(
@@ -395,14 +419,37 @@ async def stream_chat(
 _JSON_FENCE = re.compile(r"```(?:json)?\s*(.*?)```", re.S)
 
 
+def _close_brackets(text: str) -> str:
+    """Append missing closers for a JSON object cut short (some servers drop the tail)."""
+    stack: list[str] = []
+    in_str = esc = False
+    for ch in text:
+        if in_str:
+            esc = not esc and ch == "\\"
+            if ch == '"' and not esc:
+                in_str = False
+        elif ch == '"':
+            in_str = True
+        elif ch in "{[":
+            stack.append("}" if ch == "{" else "]")
+        elif ch in "}]" and stack:
+            stack.pop()
+    return text + ('"' if in_str else "") + "".join(reversed(stack))
+
+
 def extract_json(text: str) -> str:
     m = _JSON_FENCE.search(text)
     if m:
         text = m.group(1)
-    start, end = text.find("{"), text.rfind("}")
-    if start != -1 and end > start:
-        return text[start : end + 1]
-    return text.strip()
+    start = text.find("{")
+    if start == -1:
+        return text.strip()
+    candidate = text[start:].strip()
+    try:
+        _, end = json.JSONDecoder().raw_decode(candidate)  # ignores trailing prose
+        return candidate[:end]
+    except ValueError:
+        return _close_brackets(candidate)
 
 
 async def structured(
