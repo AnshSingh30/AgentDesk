@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Bug, RotateCcw, Send, Square, ThumbsDown, ThumbsUp } from "lucide-react";
+import { BookmarkPlus, Bug, RotateCcw, Send, Square, ThumbsDown, ThumbsUp } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -278,6 +278,23 @@ export function usePlayground(agentId: string, versionId: string | null) {
     [orgId],
   );
 
+  const annotate = React.useCallback(
+    async (question: string, answer: string) => {
+      try {
+        await api(`/orgs/${orgId}/agents/${agentId}/annotations`, {
+          method: "POST",
+          body: { question, answer },
+        });
+        toast.success("Saved. Similar questions will get this answer without calling the model.");
+        return true;
+      } catch (e) {
+        toast.error(errorMessage(e));
+        return false;
+      }
+    },
+    [orgId, agentId],
+  );
+
   return {
     sessionId,
     starters,
@@ -292,6 +309,7 @@ export function usePlayground(agentId: string, versionId: string | null) {
     cancel,
     reset,
     feedback,
+    annotate,
   };
 }
 
@@ -317,6 +335,7 @@ export function ChatPane({
   const [fbOpen, setFbOpen] = React.useState<ChatMessage | null>(null);
   const [fbComment, setFbComment] = React.useState("");
   const [fbEval, setFbEval] = React.useState(false);
+  const [ann, setAnn] = React.useState<{ question: string; answer: string } | null>(null);
   const listRef = React.useRef<HTMLDivElement>(null);
   const [editSql, setEditSql] = React.useState<string | null>(null);
   React.useEffect(() => {
@@ -415,6 +434,21 @@ export function ChatPane({
                         onClick={() => setFbOpen(m)}
                       >
                         <ThumbsDown className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        className="rounded p-1 hover:bg-muted"
+                        aria-label="Save as annotation"
+                        title="Save as annotation: reply to similar questions with this exact answer"
+                        onClick={() => {
+                          const i = pg.messages.findIndex((x) => x.id === m.id);
+                          const q = pg.messages
+                            .slice(0, i)
+                            .reverse()
+                            .find((x) => x.role === "user");
+                          setAnn({ question: q?.content ?? "", answer: m.content });
+                        }}
+                      >
+                        <BookmarkPlus className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   ) : null}
@@ -532,6 +566,46 @@ export function ChatPane({
                 }}
               >
                 Submit
+              </Button>
+            </div>
+          </DialogContent>
+        ) : null}
+      </Dialog>
+      <Dialog open={!!ann} onOpenChange={(o) => !o && setAnn(null)}>
+        {ann ? (
+          <DialogContent
+            title="Save as annotation"
+            description="Questions similar to this one will get this answer verbatim, without calling the model. Edit it into the answer you want."
+          >
+            <label className="text-sm font-medium" htmlFor="ann-q">
+              Question
+            </label>
+            <Textarea
+              id="ann-q"
+              value={ann.question}
+              onChange={(e) => setAnn({ ...ann, question: e.target.value })}
+              rows={2}
+            />
+            <label className="mt-3 block text-sm font-medium" htmlFor="ann-a">
+              Answer
+            </label>
+            <Textarea
+              id="ann-a"
+              value={ann.answer}
+              onChange={(e) => setAnn({ ...ann, answer: e.target.value })}
+              rows={6}
+            />
+            <div className="mt-4 flex justify-end gap-2">
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+              <Button
+                disabled={!ann.question.trim() || !ann.answer.trim()}
+                onClick={async () => {
+                  if (await pg.annotate(ann.question.trim(), ann.answer.trim())) setAnn(null);
+                }}
+              >
+                Save annotation
               </Button>
             </div>
           </DialogContent>

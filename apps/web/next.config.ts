@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // Standalone output is only needed for the Docker image (set in infra/docker/web.Dockerfile); it needs
+  // symlink rights, which Windows only grants in Developer Mode.
+  output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   reactStrictMode: true,
   poweredByHeader: false,
   eslint: { ignoreDuringBuilds: false },

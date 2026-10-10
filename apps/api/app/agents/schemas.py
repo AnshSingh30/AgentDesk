@@ -95,6 +95,11 @@ class GuardrailsCfg(BaseModel):
     advanced: GuardrailAdvanced = Field(default_factory=GuardrailAdvanced)
 
 
+class AnnotationsCfg(BaseModel):
+    enabled: bool = True
+    threshold: float = Field(0.9, ge=0.5, le=1.0)
+
+
 class MemoryCfg(BaseModel):
     max_turns: int = Field(10, ge=0, le=50)
     history_token_budget: int = Field(8000, ge=1000, le=32000)
@@ -121,6 +126,7 @@ class AgentConfig(BaseModel):
     model: ModelCfg = Field(default_factory=ModelCfg)
     guardrails: GuardrailsCfg = Field(default_factory=GuardrailsCfg)
     memory: MemoryCfg = Field(default_factory=MemoryCfg)
+    annotations: AnnotationsCfg = Field(default_factory=AnnotationsCfg)
     meta: dict[str, Any] = Field(default_factory=dict)
 
 

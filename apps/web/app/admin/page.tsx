@@ -30,19 +30,24 @@ import { formatDate, formatNumber } from "@/lib/utils";
 function Admin() {
   const me = useMe();
   const qc = useQueryClient();
+  const enabled = !!me.data?.user.is_superadmin; // admin API 404s for everyone else
   const orgs = useQuery({
+    enabled,
     queryKey: ["admin-orgs"],
     queryFn: () => api<Record<string, unknown>[]>("/admin/orgs"),
   });
   const users = useQuery({
+    enabled,
     queryKey: ["admin-users"],
     queryFn: () => api<Record<string, unknown>[]>("/admin/users"),
   });
   const errors = useQuery({
+    enabled,
     queryKey: ["admin-errors"],
     queryFn: () => api<Record<string, Record<string, unknown>[]>>("/admin/errors"),
   });
   const flags = useQuery({
+    enabled,
     queryKey: ["admin-flags"],
     queryFn: () =>
       api<{ id: string; org_id: string | null; key: string; enabled: boolean }[]>("/admin/feature-flags"),

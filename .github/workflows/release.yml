@@ -1,7 +1,8 @@
 name: Release
+# Paused until a deployment platform is chosen: runs only when started manually from the Actions tab.
+# To re-enable on version tags, restore:  push: { tags: ["v*"] }
 on:
-  push:
-    tags: ["v*"]
+  workflow_dispatch:
 permissions: { contents: write, packages: write }
 jobs:
   build-push:

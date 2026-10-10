@@ -1093,6 +1093,9 @@ export function GuardrailsStep({ config, update }: StepProps) {
     }));
   const setM = (patch: Partial<AgentConfig["memory"]>) =>
     update((c) => ({ ...c, memory: { ...c.memory, ...patch } }));
+  const ann = config.annotations ?? { enabled: true, threshold: 0.9 };
+  const setAnn = (patch: Partial<NonNullable<AgentConfig["annotations"]>>) =>
+    update((c) => ({ ...c, annotations: { ...ann, ...c.annotations, ...patch } }));
   const list = (s: string) =>
     s
       .split(/[\n,]/)
@@ -1221,6 +1224,32 @@ export function GuardrailsStep({ config, update }: StepProps) {
               max={43200}
               value={mem.session_timeout_minutes}
               onChange={(e) => setM({ session_timeout_minutes: Number(e.target.value) })}
+            />
+          </Field>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Annotation replies</CardTitle>
+          <CardDescription>
+            Questions close to a curated annotation get its answer verbatim, without a model call. Manage them
+            on the agent&apos;s Annotations page or save one from a Playground reply.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:grid-cols-2">
+          <label className="flex items-center gap-2 text-sm">
+            <Switch checked={ann.enabled} onCheckedChange={(v) => setAnn({ enabled: v })} /> Use annotation
+            replies
+          </label>
+          <Field label="Similarity threshold" hint="0.50-1.00 (default 0.90); higher = stricter match">
+            <Input
+              type="number"
+              min={0.5}
+              max={1}
+              step={0.01}
+              value={ann.threshold}
+              disabled={!ann.enabled}
+              onChange={(e) => setAnn({ threshold: Number(e.target.value) })}
             />
           </Field>
         </CardContent>

@@ -1,0 +1,40 @@
+# HR Onboarding eval set (seeded agent: KB only). Facts come from infra/scripts/generate_demo_docs.py.
+# expected_facts: every item must appear in the answer; a nested list means "any of these".
+cases:
+  - { question: "How many casual leaves do I get per year?", expected_route: [rag], expected_facts: ["12"] }
+  - question: Can casual leave be carried forward?
+    expected_route: [rag]
+    expected_facts: [["cannot be carried", "can't be carried", "not be carried", "cannot carry", "can't carry", "lapse", "no carry", "not carried"]]
+  - { question: "What is the notice period for employees?", expected_route: [rag], expected_facts: ["60 days"] }
+  - { question: "What is the notice period during probation?", expected_route: [rag], expected_facts: ["15 days"] }
+  - { question: "How long is the probation period?", expected_route: [rag], expected_facts: ["90 days"] }
+  - { question: "How many days a week can I work from home?", expected_route: [rag], expected_facts: [["2 days", "two days"]] }
+  - { question: "Which day do teams need to be in the office?", expected_route: [rag], expected_facts: ["tuesday"] }
+  - { question: "Is 2 October a holiday?", expected_route: [rag], expected_facts: ["gandhi jayanti"] }
+  - { question: "What's the health insurance cover amount?", expected_route: [rag], expected_facts: [["5,00,000", "500,000", "5 lakh", "500000"]] }
+  - { question: "Who do I contact for laptop issues?", expected_route: [rag], expected_facts: ["it-helpdesk@northwind.example"] }
+  - { question: "How many sick leaves do I get?", expected_route: [rag], expected_facts: ["8"] }
+  - { question: "When do I need a medical certificate for sick leave?", expected_route: [rag], expected_facts: [["2 consecutive", "two consecutive"]] }
+  - { question: "How much earned leave can I carry forward?", expected_route: [rag], expected_facts: ["30"] }
+  - { question: "How much paternity leave is there?", expected_route: [rag], expected_facts: ["10"] }
+  - { question: "How long is maternity leave?", expected_route: [rag], expected_facts: ["26 weeks"] }
+  - { question: "What is my annual learning budget?", expected_route: [rag], expected_facts: [["40,000", "40000"]] }
+  - { question: "Is there an allowance for a home office setup?", expected_route: [rag], expected_facts: [["15,000", "15000"]] }
+  - { question: "What's the hotel cap per night for L4-L5 employees?", expected_route: [rag], expected_facts: [["6,500", "6500"]] }
+  - { question: "What is the per diem for L6+ on business travel?", expected_route: [rag], expected_facts: [["2,500", "2500"]] }
+  - { question: "Can I accept a gift from a supplier?", expected_route: [rag], expected_facts: [["2,000", "2000"]] }
+  - { question: "When is the Diwali holiday this year?", expected_route: [rag], expected_facts: [["9 november", "november 9", "9 nov", "9th november", "9-10 november", "9 and 10 november"]] }
+  - { question: "How many public holidays does Northwind observe?", expected_route: [rag], expected_facts: ["12"] }
+  - { question: "When is the new joiner welcome session?", expected_route: [rag], expected_facts: ["friday", "11"] }
+  - { question: "How quickly must I report a lost laptop?", expected_route: [rag], expected_facts: [["2 hours", "two hours"]] }
+  - { question: "What is the minimum password length?", expected_route: [rag], expected_facts: ["14"] }
+  - { question: "When is salary paid each month?", expected_route: [rag], expected_facts: ["last working day"] }
+  - { question: "What are the core working hours?", expected_route: [rag], expected_facts: [["10:00", "10 am", "10am", "10 a.m"]] }
+  - { question: "How much is the monthly meal card?", expected_route: [rag], expected_facts: [["2,200", "2200"]] }
+  - { question: "How long does it take to investigate a Speak Up report?", expected_route: [rag], expected_facts: ["10 working days"] }
+  - { question: "What's the health insurance helpline number?", expected_route: [rag], expected_facts: ["1800-000-1234"] }
+  - { question: "How many optional holidays can I choose?", expected_route: [rag], expected_facts: [["2", "two"]] }
+  # ---- must not guess
+  - { question: "What's the capital of France?", expected_no_answer: true }
+  - { question: "What is Northwind's current share price?", expected_no_answer: true }
+  - { question: "Write me a Python script that sorts a list.", expected_no_answer: true }

@@ -1,0 +1,4322 @@
+{
+ "template": "hr_analytics_extended",
+ "model": "azure/gpt-5.4-mini",
+ "utility_model": "azure/gpt-5.4-mini",
+ "judge_model": "azure/gpt-5.4-mini",
+ "embedding_model": "openai/BAAI/bge-base-en-v1.5",
+ "cases": 110,
+ "passed": 104,
+ "metrics": {
+  "route_accuracy": 1.0,
+  "fact_accuracy": 0.971,
+  "groundedness": 0.971,
+  "sql_first_try": 1.0,
+  "sql_with_retries": 1.0,
+  "no_answer_accuracy": null,
+  "privacy": 1.0,
+  "latency_p50_ms": 2702,
+  "latency_p95_ms": 3462,
+  "avg_tokens": 4066
+ },
+ "usage": {
+  "agent": {
+   "input_tokens": 433963,
+   "output_tokens": 13327,
+   "cost_usd": 0.185417
+  },
+  "judge": {
+   "input_tokens": 34730,
+   "output_tokens": 1823,
+   "cost_usd": 0.034251
+  },
+  "agent_cost_by_node": {
+   "generate_sql (gpt-5.4-mini)": 0.109875,
+   "generate_answer (gpt-5.4-mini)": 0.072346,
+   "router (jev-1.13.0)": 0.003196,
+   "rag_retrieve (query)": 0.0
+  }
+ },
+ "run_at": "2026-10-10T17:14:56+00:00",
+ "results": [
+  {
+   "question": "How many female employees are currently active?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"female_active_employees\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'active' AND \"e\".\"gender\" = 'female' LIMIT 200"
+   ],
+   "answer": "164 female employees are currently active.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2660,
+   "tokens": 4002,
+   "agent_usage": {
+    "input_tokens": 3904,
+    "output_tokens": 98,
+    "cost_usd": 0.001507
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000884,
+    "generate_answer (gpt-5.4-mini)": 0.000594
+   },
+   "judge_usage": {
+    "input_tokens": 271,
+    "output_tokens": 17,
+    "cost_usd": 0.00027975
+   }
+  },
+  {
+   "question": "How many active employees identify their gender as other?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"active_employees\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'active' AND \"e\".\"gender\" = 'other' LIMIT 200"
+   ],
+   "answer": "10 employees are currently active and identify their gender as other.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3451,
+   "tokens": 4012,
+   "agent_usage": {
+    "input_tokens": 3909,
+    "output_tokens": 103,
+    "cost_usd": 0.001532
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000886,
+    "generate_answer (gpt-5.4-mini)": 0.000617
+   },
+   "judge_usage": {
+    "input_tokens": 276,
+    "output_tokens": 17,
+    "cost_usd": 0.0002835
+   }
+  },
+  {
+   "question": "How many full-time employees are active?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"active_full_time_employees\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'active' AND \"e\".\"employment_type\" = 'full_time' LIMIT 200"
+   ],
+   "answer": "375 employees are currently active and full-time.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2741,
+   "tokens": 4014,
+   "agent_usage": {
+    "input_tokens": 3909,
+    "output_tokens": 105,
+    "cost_usd": 0.001543
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000907,
+    "generate_answer (gpt-5.4-mini)": 0.000607
+   },
+   "judge_usage": {
+    "input_tokens": 277,
+    "output_tokens": 17,
+    "cost_usd": 0.00028425
+   }
+  },
+  {
+   "question": "How many employee records are there in total, including people who have left?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"total_employee_records\" FROM \"employees\" AS \"employees\" LIMIT 200"
+   ],
+   "answer": "520 employees are recorded in total, including people who have left.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2941,
+   "tokens": 3940,
+   "agent_usage": {
+    "input_tokens": 3846,
+    "output_tokens": 94,
+    "cost_usd": 0.001441
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000799,
+    "generate_answer (gpt-5.4-mini)": 0.000613
+   },
+   "judge_usage": {
+    "input_tokens": 260,
+    "output_tokens": 17,
+    "cost_usd": 0.0002715
+   }
+  },
+  {
+   "question": "How many active employees are at level L1?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"active_l1_employees\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'active' AND \"e\".\"level\" = 'L1' LIMIT 200"
+   ],
+   "answer": "103 employees are currently active at level L1.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2901,
+   "tokens": 4016,
+   "agent_usage": {
+    "input_tokens": 3913,
+    "output_tokens": 103,
+    "cost_usd": 0.001535
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000895,
+    "generate_answer (gpt-5.4-mini)": 0.000611
+   },
+   "judge_usage": {
+    "input_tokens": 279,
+    "output_tokens": 17,
+    "cost_usd": 0.00028575000000000003
+   }
+  },
+  {
+   "question": "Which career level has the most active employees?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"e\".\"level\" AS \"career_level\", COUNT(*) AS \"active_employees\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'active' GROUP BY \"e\".\"level\" ORDER BY \"active_employees\" DESC LIMIT 1"
+   ],
+   "answer": "L2 has the most active employees, with 129 active employees.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2783,
+   "tokens": 4124,
+   "agent_usage": {
+    "input_tokens": 4002,
+    "output_tokens": 122,
+    "cost_usd": 0.001688
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001012,
+    "generate_answer (gpt-5.4-mini)": 0.000647
+   },
+   "judge_usage": {
+    "input_tokens": 301,
+    "output_tokens": 17,
+    "cost_usd": 0.00030225
+   }
+  },
+  {
+   "question": "How many active employees are in Hyderabad?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"active_employees\" FROM \"employees\" AS \"e\" JOIN \"locations\" AS \"l\" ON \"l\".\"location_id\" = \"e\".\"location_id\" WHERE \"e\".\"status\" = 'active' AND \"l\".\"city\" = 'Hyderabad' LIMIT 200"
+   ],
+   "answer": "101 active employees are in Hyderabad.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2802,
+   "tokens": 4036,
+   "agent_usage": {
+    "input_tokens": 3927,
+    "output_tokens": 109,
+    "cost_usd": 0.001574
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000934,
+    "generate_answer (gpt-5.4-mini)": 0.000611
+   },
+   "judge_usage": {
+    "input_tokens": 294,
+    "output_tokens": 17,
+    "cost_usd": 0.000297
+   }
+  },
+  {
+   "question": "Which office city has the most active employees?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"l\".\"city\" AS \"office_city\", COUNT(*) AS \"active_employees\" FROM \"employees\" AS \"e\" JOIN \"locations\" AS \"l\" ON \"l\".\"location_id\" = \"e\".\"location_id\" WHERE \"e\".\"status\" = 'active' GROUP BY \"l\".\"city\" ORDER BY \"active_employees\" DESC LIMIT 1"
+   ],
+   "answer": "Bengaluru has the most active employees, with 113 active employees.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2633,
+   "tokens": 4163,
+   "agent_usage": {
+    "input_tokens": 4028,
+    "output_tokens": 135,
+    "cost_usd": 0.002976
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.002271,
+    "generate_answer (gpt-5.4-mini)": 0.000676
+   },
+   "judge_usage": {
+    "input_tokens": 329,
+    "output_tokens": 17,
+    "cost_usd": 0.00032325
+   }
+  },
+  {
+   "question": "Which office city has the fewest active employees?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"l\".\"city\" AS \"office_city\", COUNT(*) AS \"active_employees\" FROM \"employees\" AS \"e\" JOIN \"locations\" AS \"l\" ON \"l\".\"location_id\" = \"e\".\"location_id\" WHERE \"e\".\"status\" = 'active' GROUP BY \"l\".\"city\" ORDER BY \"active_employees\" ASC, \"office_city\" ASC LIMIT 1"
+   ],
+   "answer": "Pune has the fewest active employees, with 98 active employees.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3151,
+   "tokens": 4173,
+   "agent_usage": {
+    "input_tokens": 4035,
+    "output_tokens": 138,
+    "cost_usd": 0.001784
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.00108,
+    "generate_answer (gpt-5.4-mini)": 0.000675
+   },
+   "judge_usage": {
+    "input_tokens": 333,
+    "output_tokens": 17,
+    "cost_usd": 0.00032625000000000004
+   }
+  },
+  {
+   "question": "How many office locations do we have?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"office_locations\" FROM \"locations\" AS \"locations\" LIMIT 200"
+   ],
+   "answer": "4 office locations are recorded.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2368,
+   "tokens": 3897,
+   "agent_usage": {
+    "input_tokens": 3817,
+    "output_tokens": 80,
+    "cost_usd": 0.001361
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000762,
+    "generate_answer (gpt-5.4-mini)": 0.00057
+   },
+   "judge_usage": {
+    "input_tokens": 244,
+    "output_tokens": 17,
+    "cost_usd": 0.0002595
+   }
+  },
+  {
+   "question": "How many active employees work in the Finance department?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"active_employees\" FROM \"employees\" AS \"e\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"e\".\"department_id\" WHERE \"e\".\"status\" = 'active' AND \"d\".\"name\" = 'Finance' LIMIT 200"
+   ],
+   "answer": "22 employees are currently active in the Finance department.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2919,
+   "tokens": 4042,
+   "agent_usage": {
+    "input_tokens": 3932,
+    "output_tokens": 110,
+    "cost_usd": 0.00279
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.002136,
+    "generate_answer (gpt-5.4-mini)": 0.000625
+   },
+   "judge_usage": {
+    "input_tokens": 299,
+    "output_tokens": 17,
+    "cost_usd": 0.00030075
+   }
+  },
+  {
+   "question": "Which department has the fewest active employees?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"d\".\"name\" AS \"department\", COUNT(*) AS \"active_employees\" FROM \"employees\" AS \"e\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"e\".\"department_id\" WHERE \"e\".\"status\" = 'active' GROUP BY \"d\".\"name\" ORDER BY \"active_employees\" ASC LIMIT 1"
+   ],
+   "answer": "IT has the fewest active employees, with 18 active employees.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2692,
+   "tokens": 4153,
+   "agent_usage": {
+    "input_tokens": 4022,
+    "output_tokens": 131,
+    "cost_usd": 0.002953
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.002262,
+    "generate_answer (gpt-5.4-mini)": 0.000662
+   },
+   "judge_usage": {
+    "input_tokens": 323,
+    "output_tokens": 17,
+    "cost_usd": 0.00031875
+   }
+  },
+  {
+   "question": "How many active Engineering employees are based in Bengaluru?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"active_engineering_employees\" FROM \"employees\" AS \"e\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"e\".\"department_id\" JOIN \"locations\" AS \"l\" ON \"l\".\"location_id\" = \"e\".\"location_id\" WHERE \"e\".\"status\" = 'active' AND \"d\".\"name\" = 'Engineering' AND \"l\".\"city\" = 'Bengaluru' LIMIT 200"
+   ],
+   "answer": "38 employees are currently active in Engineering and based in Bengaluru.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2640,
+   "tokens": 4129,
+   "agent_usage": {
+    "input_tokens": 3989,
+    "output_tokens": 140,
+    "cost_usd": 0.0017569999999999999
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001058,
+    "generate_answer (gpt-5.4-mini)": 0.00067
+   },
+   "judge_usage": {
+    "input_tokens": 343,
+    "output_tokens": 17,
+    "cost_usd": 0.00033375
+   }
+  },
+  {
+   "question": "How many active employees have the job title DevOps Engineer?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"active_devops_engineers\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'active' AND \"e\".\"job_title\" = 'DevOps Engineer' LIMIT 200"
+   ],
+   "answer": "31 employees are currently active and have the job title DevOps Engineer.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3268,
+   "tokens": 4034,
+   "agent_usage": {
+    "input_tokens": 3923,
+    "output_tokens": 111,
+    "cost_usd": 0.002787
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.002124,
+    "generate_answer (gpt-5.4-mini)": 0.000634
+   },
+   "judge_usage": {
+    "input_tokens": 287,
+    "output_tokens": 17,
+    "cost_usd": 0.00029175
+   }
+  },
+  {
+   "question": "What is the most common job title among active employees?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"e\".\"job_title\" AS \"job_title\", COUNT(*) AS \"employee_count\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'active' GROUP BY \"e\".\"job_title\" ORDER BY \"employee_count\" DESC, \"job_title\" ASC LIMIT 1"
+   ],
+   "answer": "36 active employees have the most common job title, Senior Software Engineer.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3276,
+   "tokens": 4069,
+   "agent_usage": {
+    "input_tokens": 3945,
+    "output_tokens": 124,
+    "cost_usd": 0.002863
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.002182,
+    "generate_answer (gpt-5.4-mini)": 0.000652
+   },
+   "judge_usage": {
+    "input_tokens": 309,
+    "output_tokens": 17,
+    "cost_usd": 0.00030825
+   }
+  },
+  {
+   "question": "How many distinct job titles exist across all employees?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(DISTINCT \"e\".\"job_title\") AS \"distinct_job_titles\" FROM \"employees\" AS \"e\" WHERE \"e\".\"job_title\" IS NOT NULL LIMIT 200"
+   ],
+   "answer": "27 distinct job titles exist across all employees.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2430,
+   "tokens": 4016,
+   "agent_usage": {
+    "input_tokens": 3916,
+    "output_tokens": 100,
+    "cost_usd": 0.001524
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000892,
+    "generate_answer (gpt-5.4-mini)": 0.000603
+   },
+   "judge_usage": {
+    "input_tokens": 271,
+    "output_tokens": 17,
+    "cost_usd": 0.00027975
+   }
+  },
+  {
+   "question": "How many active interns are in the Engineering department?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"active_interns\" FROM \"employees\" AS \"e\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"e\".\"department_id\" WHERE \"e\".\"status\" = 'active' AND \"e\".\"employment_type\" = 'intern' AND \"d\".\"name\" = 'Engineering' LIMIT 200"
+   ],
+   "answer": "6 active interns are currently in the Engineering department.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3289,
+   "tokens": 4178,
+   "agent_usage": {
+    "input_tokens": 4048,
+    "output_tokens": 130,
+    "cost_usd": 0.001412
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.00074,
+    "generate_answer (gpt-5.4-mini)": 0.000643
+   },
+   "judge_usage": {
+    "input_tokens": 313,
+    "output_tokens": 17,
+    "cost_usd": 0.00031125
+   }
+  },
+  {
+   "question": "How many Engineering employees are on leave right now?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"engineering_on_leave\" FROM \"employees\" AS \"e\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"e\".\"department_id\" WHERE \"d\".\"name\" = 'Engineering' AND \"e\".\"status\" = 'on_leave' LIMIT 200"
+   ],
+   "answer": "4 Engineering employees are on leave right now.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2588,
+   "tokens": 4055,
+   "agent_usage": {
+    "input_tokens": 3943,
+    "output_tokens": 112,
+    "cost_usd": 0.001598
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000946,
+    "generate_answer (gpt-5.4-mini)": 0.000623
+   },
+   "judge_usage": {
+    "input_tokens": 299,
+    "output_tokens": 17,
+    "cost_usd": 0.00030075
+   }
+  },
+  {
+   "question": "What percentage of all active employees are women?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT 100.0 * COUNT(*) FILTER(WHERE \"e\".\"gender\" = 'female') / NULLIF(COUNT(*), 0) AS \"women_pct\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'active' LIMIT 200"
+   ],
+   "answer": "38.68% of active employees are women.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3479,
+   "tokens": 4047,
+   "agent_usage": {
+    "input_tokens": 3928,
+    "output_tokens": 119,
+    "cost_usd": 0.001619
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000966,
+    "generate_answer (gpt-5.4-mini)": 0.000624
+   },
+   "judge_usage": {
+    "input_tokens": 294,
+    "output_tokens": 17,
+    "cost_usd": 0.000297
+   }
+  },
+  {
+   "question": "How many people managers are there, i.e. active employees who have at least one active direct report?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(DISTINCT \"e\".\"employee_id\") AS \"people_managers\" FROM \"employees\" AS \"e\" JOIN \"employees\" AS \"r\" ON \"r\".\"manager_id\" = \"e\".\"employee_id\" WHERE \"e\".\"status\" = 'active' AND \"r\".\"status\" = 'active' LIMIT 200"
+   ],
+   "answer": "40 active employees are people managers.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2773,
+   "tokens": 4094,
+   "agent_usage": {
+    "input_tokens": 3977,
+    "output_tokens": 117,
+    "cost_usd": 0.001639
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 3e-05,
+    "generate_sql (gpt-5.4-mini)": 0.00098,
+    "generate_answer (gpt-5.4-mini)": 0.000629
+   },
+   "judge_usage": {
+    "input_tokens": 315,
+    "output_tokens": 17,
+    "cost_usd": 0.00031275
+   }
+  },
+  {
+   "question": "Who is the head of the Engineering department?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"e\".\"full_name\" AS \"head_of_engineering\" FROM \"departments\" AS \"d\" JOIN \"employees\" AS \"e\" ON \"e\".\"employee_id\" = \"d\".\"head_employee_id\" WHERE \"d\".\"name\" = 'Engineering' LIMIT 200"
+   ],
+   "answer": "Ananya Chauhan is the head of the Engineering department.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2835,
+   "tokens": 4167,
+   "agent_usage": {
+    "input_tokens": 4051,
+    "output_tokens": 116,
+    "cost_usd": 0.001697
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001031,
+    "generate_answer (gpt-5.4-mini)": 0.000637
+   },
+   "judge_usage": {
+    "input_tokens": 300,
+    "output_tokens": 17,
+    "cost_usd": 0.0003015
+   }
+  },
+  {
+   "question": "What is the cost center code of the Marketing department?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"d\".\"cost_center\" AS \"cost_center_code\" FROM \"departments\" AS \"d\" WHERE \"d\".\"name\" = 'Marketing' LIMIT 200"
+   ],
+   "answer": "The Marketing department\u2019s cost center code is CC-220.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2122,
+   "tokens": 4126,
+   "agent_usage": {
+    "input_tokens": 4026,
+    "output_tokens": 100,
+    "cost_usd": 0.00126
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000615,
+    "generate_answer (gpt-5.4-mini)": 0.000616
+   },
+   "judge_usage": {
+    "input_tokens": 274,
+    "output_tokens": 17,
+    "cost_usd": 0.000282
+   }
+  },
+  {
+   "question": "How many employees joined in 2024?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"employees_joined_2024\" FROM \"employees\" AS \"e\" WHERE \"e\".\"hire_date\" >= '2024-01-01' AND \"e\".\"hire_date\" < '2025-01-01' LIMIT 200"
+   ],
+   "answer": "117 employees joined in 2024.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2470,
+   "tokens": 4056,
+   "agent_usage": {
+    "input_tokens": 3937,
+    "output_tokens": 119,
+    "cost_usd": 0.001624
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000981,
+    "generate_answer (gpt-5.4-mini)": 0.000614
+   },
+   "judge_usage": {
+    "input_tokens": 289,
+    "output_tokens": 17,
+    "cost_usd": 0.00029325
+   }
+  },
+  {
+   "question": "How many employees joined in 2026 so far?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"employees_joined\" FROM \"employees\" AS \"e\" WHERE \"e\".\"hire_date\" >= CAST('2026-01-01' AS DATE) AND \"e\".\"hire_date\" < CAST('2027-01-01' AS DATE) LIMIT 200"
+   ],
+   "answer": "95 employees joined in 2026 so far.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3412,
+   "tokens": 4093,
+   "agent_usage": {
+    "input_tokens": 3971,
+    "output_tokens": 122,
+    "cost_usd": 0.0016619999999999998
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001005,
+    "generate_answer (gpt-5.4-mini)": 0.000628
+   },
+   "judge_usage": {
+    "input_tokens": 295,
+    "output_tokens": 17,
+    "cost_usd": 0.00029775
+   }
+  },
+  {
+   "question": "Which year had the most new joiners?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT EXTRACT(YEAR FROM \"e\".\"hire_date\") AS \"join_year\", COUNT(*) AS \"new_joiners\" FROM \"employees\" AS \"e\" GROUP BY EXTRACT(YEAR FROM \"e\".\"hire_date\") ORDER BY \"new_joiners\" DESC, \"join_year\" ASC LIMIT 1"
+   ],
+   "answer": "2025 had the most new joiners, with 124 employees joining.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2687,
+   "tokens": 4198,
+   "agent_usage": {
+    "input_tokens": 4057,
+    "output_tokens": 141,
+    "cost_usd": 0.0014680000000000001
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000778,
+    "generate_answer (gpt-5.4-mini)": 0.000661
+   },
+   "judge_usage": {
+    "input_tokens": 311,
+    "output_tokens": 17,
+    "cost_usd": 0.00030975
+   }
+  },
+  {
+   "question": "Who is the longest-serving active employee?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"e\".\"full_name\" AS \"employee_name\", \"e\".\"hire_date\" AS \"hire_date\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'active' ORDER BY \"e\".\"hire_date\" ASC, \"e\".\"employee_id\" ASC LIMIT 1"
+   ],
+   "answer": "Aditya Tiwari is the longest-serving active employee.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2420,
+   "tokens": 4174,
+   "agent_usage": {
+    "input_tokens": 4044,
+    "output_tokens": 130,
+    "cost_usd": 0.001756
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001075,
+    "generate_answer (gpt-5.4-mini)": 0.000652
+   },
+   "judge_usage": {
+    "input_tokens": 313,
+    "output_tokens": 17,
+    "cost_usd": 0.00031125
+   }
+  },
+  {
+   "question": "What is the earliest hire date in the company?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT MIN(\"e\".\"hire_date\") AS \"earliest_hire_date\" FROM \"employees\" AS \"e\" LIMIT 200"
+   ],
+   "answer": "2016-01-07 is the earliest hire date in the company.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2259,
+   "tokens": 4112,
+   "agent_usage": {
+    "input_tokens": 4012,
+    "output_tokens": 100,
+    "cost_usd": 0.001596
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.00094,
+    "generate_answer (gpt-5.4-mini)": 0.000627
+   },
+   "judge_usage": {
+    "input_tokens": 272,
+    "output_tokens": 17,
+    "cost_usd": 0.0002805
+   }
+  },
+  {
+   "question": "When did the most recent employee join? Give the date.",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT MAX(\"employees\".\"hire_date\") AS \"most_recent_join_date\" FROM \"employees\" AS \"employees\" LIMIT 200"
+   ],
+   "answer": "The most recent employee joined on 2026-08-22.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2978,
+   "tokens": 4111,
+   "agent_usage": {
+    "input_tokens": 4015,
+    "output_tokens": 96,
+    "cost_usd": 0.001579
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000928,
+    "generate_answer (gpt-5.4-mini)": 0.000622
+   },
+   "judge_usage": {
+    "input_tokens": 271,
+    "output_tokens": 17,
+    "cost_usd": 0.00027975
+   }
+  },
+  {
+   "question": "How many employees joined in the second quarter of 2025 (April to June)?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"employees_joined\" FROM \"employees\" AS \"e\" WHERE \"e\".\"hire_date\" >= CAST('2025-04-01' AS DATE) AND \"e\".\"hire_date\" < CAST('2025-07-01' AS DATE) LIMIT 200"
+   ],
+   "answer": "31 employees joined in the second quarter of 2025.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2919,
+   "tokens": 4194,
+   "agent_usage": {
+    "input_tokens": 4059,
+    "output_tokens": 135,
+    "cost_usd": 0.001438
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 3e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000759,
+    "generate_answer (gpt-5.4-mini)": 0.000649
+   },
+   "judge_usage": {
+    "input_tokens": 303,
+    "output_tokens": 17,
+    "cost_usd": 0.00030375
+   }
+  },
+  {
+   "question": "How many employees in the Product department joined in 2025?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"employees_joined_2025\" FROM \"employees\" AS \"e\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"e\".\"department_id\" WHERE \"d\".\"name\" = 'Product' AND \"e\".\"hire_date\" >= '2025-01-01' AND \"e\".\"hire_date\" < '2026-01-01' LIMIT 200"
+   ],
+   "answer": "15 employees in the Product department joined in 2025.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2989,
+   "tokens": 4218,
+   "agent_usage": {
+    "input_tokens": 4073,
+    "output_tokens": 145,
+    "cost_usd": 0.0030499999999999998
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.002356,
+    "generate_answer (gpt-5.4-mini)": 0.000665
+   },
+   "judge_usage": {
+    "input_tokens": 333,
+    "output_tokens": 17,
+    "cost_usd": 0.00032625000000000004
+   }
+  },
+  {
+   "question": "How many active employees have been with the company for more than 5 years?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"active_employees_over_5_years\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'active' AND (CAST('2026-10-10' AS DATE) - \"e\".\"hire_date\") / 365.25 > 5 LIMIT 200"
+   ],
+   "answer": "80 active employees have been with the company for more than 5 years.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2892,
+   "tokens": 4118,
+   "agent_usage": {
+    "input_tokens": 3965,
+    "output_tokens": 153,
+    "cost_usd": 0.0017949999999999997
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001102,
+    "generate_answer (gpt-5.4-mini)": 0.000664
+   },
+   "judge_usage": {
+    "input_tokens": 314,
+    "output_tokens": 17,
+    "cost_usd": 0.000312
+   }
+  },
+  {
+   "question": "How many employees left because of Relocation?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"employees_left_for_relocation\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'exited' AND \"e\".\"exit_reason\" = 'Relocation' LIMIT 200"
+   ],
+   "answer": "10 employees left because of Relocation.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3494,
+   "tokens": 4026,
+   "agent_usage": {
+    "input_tokens": 3922,
+    "output_tokens": 104,
+    "cost_usd": 0.0015470000000000002
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000914,
+    "generate_answer (gpt-5.4-mini)": 0.000604
+   },
+   "judge_usage": {
+    "input_tokens": 278,
+    "output_tokens": 17,
+    "cost_usd": 0.000285
+   }
+  },
+  {
+   "question": "How many exits were due to Restructuring?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"restructuring_exits\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'exited' AND \"e\".\"exit_reason\" = 'Restructuring' LIMIT 200"
+   ],
+   "answer": "12 employees exited due to Restructuring.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2581,
+   "tokens": 3962,
+   "agent_usage": {
+    "input_tokens": 3857,
+    "output_tokens": 105,
+    "cost_usd": 0.001503
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000863,
+    "generate_answer (gpt-5.4-mini)": 0.000611
+   },
+   "judge_usage": {
+    "input_tokens": 281,
+    "output_tokens": 17,
+    "cost_usd": 0.00028725
+   }
+  },
+  {
+   "question": "What is the least common exit reason?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"e\".\"exit_reason\" AS \"exit_reason\", COUNT(*) AS \"exits\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'exited' AND \"e\".\"exit_reason\" IS NOT NULL GROUP BY \"e\".\"exit_reason\" ORDER BY \"exits\" ASC, \"exit_reason\" ASC LIMIT 1"
+   ],
+   "answer": "9 exited employees had Compensation as their exit reason.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2714,
+   "tokens": 4199,
+   "agent_usage": {
+    "input_tokens": 4063,
+    "output_tokens": 136,
+    "cost_usd": 0.0014520000000000002
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000777,
+    "generate_answer (gpt-5.4-mini)": 0.000646
+   },
+   "judge_usage": {
+    "input_tokens": 313,
+    "output_tokens": 17,
+    "cost_usd": 0.00031125
+   }
+  },
+  {
+   "question": "How many voluntary exits have there been in total (exit reason not Performance or Restructuring)?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"voluntary_exits\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'exited' AND \"e\".\"exit_reason\" IS NOT NULL AND NOT \"e\".\"exit_reason\" IN ('Performance', 'Restructuring') LIMIT 200"
+   ],
+   "answer": "66 employees have had voluntary exits in total.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2666,
+   "tokens": 4064,
+   "agent_usage": {
+    "input_tokens": 3944,
+    "output_tokens": 120,
+    "cost_usd": 0.0016290000000000002
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 3e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000969,
+    "generate_answer (gpt-5.4-mini)": 0.00063
+   },
+   "judge_usage": {
+    "input_tokens": 303,
+    "output_tokens": 17,
+    "cost_usd": 0.00030375
+   }
+  },
+  {
+   "question": "How many employees exited in 2024?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"exited_employees\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'exited' AND \"e\".\"exit_date\" >= '2024-01-01' AND \"e\".\"exit_date\" < '2025-01-01' LIMIT 200"
+   ],
+   "answer": "14 employees exited in 2024.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2724,
+   "tokens": 4077,
+   "agent_usage": {
+    "input_tokens": 3950,
+    "output_tokens": 127,
+    "cost_usd": 0.0016699999999999998
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001017,
+    "generate_answer (gpt-5.4-mini)": 0.000624
+   },
+   "judge_usage": {
+    "input_tokens": 297,
+    "output_tokens": 17,
+    "cost_usd": 0.00029925
+   }
+  },
+  {
+   "question": "Which department has had the most exits overall?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"d\".\"name\" AS \"department\", COUNT(*) AS \"exits\" FROM \"employees\" AS \"e\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"e\".\"department_id\" WHERE \"e\".\"status\" = 'exited' GROUP BY \"d\".\"name\" ORDER BY \"exits\" DESC LIMIT 200"
+   ],
+   "answer": "Engineering has had the most exits overall, with 34 exits.\n\n| Department | Exits |\n|---|---:|\n| Engineering | 34 |\n| Sales | 13 |\n| Customer Success | 13 |\n| Product | 9 |\n| People Operations | 7 |\n| IT | 6 |\n| Marketing | 5 |\n| Finance | 4 |",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3218,
+   "tokens": 4306,
+   "agent_usage": {
+    "input_tokens": 4116,
+    "output_tokens": 190,
+    "cost_usd": 0.00208
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001081,
+    "generate_answer (gpt-5.4-mini)": 0.00097
+   },
+   "judge_usage": {
+    "input_tokens": 426,
+    "output_tokens": 17,
+    "cost_usd": 0.00039600000000000003
+   }
+  },
+  {
+   "question": "How many Engineering employees left for a Better opportunity?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"engineering_better_opportunity_exits\" FROM \"employees\" AS \"e\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"e\".\"department_id\" WHERE \"d\".\"name\" = 'Engineering' AND \"e\".\"status\" = 'exited' AND \"e\".\"exit_reason\" = 'Better opportunity' LIMIT 200"
+   ],
+   "answer": "7 Engineering employees left for a Better opportunity.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2777,
+   "tokens": 4091,
+   "agent_usage": {
+    "input_tokens": 3965,
+    "output_tokens": 126,
+    "cost_usd": 0.0016779999999999998
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001009,
+    "generate_answer (gpt-5.4-mini)": 0.00064
+   },
+   "judge_usage": {
+    "input_tokens": 320,
+    "output_tokens": 17,
+    "cost_usd": 0.0003165
+   }
+  },
+  {
+   "question": "What is the most common exit reason in the Sales department?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"e\".\"exit_reason\" AS \"exit_reason\", COUNT(*) AS \"exit_count\" FROM \"employees\" AS \"e\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"e\".\"department_id\" WHERE \"d\".\"name\" = 'Sales' AND \"e\".\"status\" = 'exited' AND \"e\".\"exit_reason\" IS NOT NULL GROUP BY \"e\".\"exit_reason\" ORDER BY \"exit_count\" DESC, \"exit_reason\" ASC LIMIT 1"
+   ],
+   "answer": "The most common exit reason in the Sales department is Higher studies, with 4 exits.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2933,
+   "tokens": 4269,
+   "agent_usage": {
+    "input_tokens": 4113,
+    "output_tokens": 156,
+    "cost_usd": 0.001576
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000841,
+    "generate_answer (gpt-5.4-mini)": 0.000706
+   },
+   "judge_usage": {
+    "input_tokens": 361,
+    "output_tokens": 17,
+    "cost_usd": 0.00034725
+   }
+  },
+  {
+   "question": "How many interns have exited the company?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"exited_interns\" FROM \"employees\" AS \"e\" WHERE \"e\".\"employment_type\" = 'intern' AND \"e\".\"status\" = 'exited' LIMIT 200"
+   ],
+   "answer": "6 employees are exited interns.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2590,
+   "tokens": 4108,
+   "agent_usage": {
+    "input_tokens": 4004,
+    "output_tokens": 104,
+    "cost_usd": 0.001264
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000639,
+    "generate_answer (gpt-5.4-mini)": 0.000596
+   },
+   "judge_usage": {
+    "input_tokens": 274,
+    "output_tokens": 17,
+    "cost_usd": 0.000282
+   }
+  },
+  {
+   "question": "How many employees left in the last 12 months?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"employees_left_last_12_months\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'exited' AND \"e\".\"exit_date\" >= CURRENT_DATE - INTERVAL '12 MONTHS' LIMIT 200"
+   ],
+   "answer": "51 employees left in the last 12 months.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2587,
+   "tokens": 4147,
+   "agent_usage": {
+    "input_tokens": 4028,
+    "output_tokens": 119,
+    "cost_usd": 0.001692
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001037,
+    "generate_answer (gpt-5.4-mini)": 0.000626
+   },
+   "judge_usage": {
+    "input_tokens": 292,
+    "output_tokens": 17,
+    "cost_usd": 0.0002955
+   }
+  },
+  {
+   "question": "Which office city has had the most exits?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"l\".\"city\" AS \"office_city\", COUNT(*) AS \"exits\" FROM \"employees\" AS \"e\" JOIN \"locations\" AS \"l\" ON \"l\".\"location_id\" = \"e\".\"location_id\" WHERE \"e\".\"status\" = 'exited' GROUP BY \"l\".\"city\" ORDER BY \"exits\" DESC LIMIT 1"
+   ],
+   "answer": "Bengaluru has had the most exits, with 25 exits.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2354,
+   "tokens": 4202,
+   "agent_usage": {
+    "input_tokens": 4069,
+    "output_tokens": 133,
+    "cost_usd": 0.0014420000000000001
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000742,
+    "generate_answer (gpt-5.4-mini)": 0.000671
+   },
+   "judge_usage": {
+    "input_tokens": 326,
+    "output_tokens": 17,
+    "cost_usd": 0.000321
+   }
+  },
+  {
+   "question": "Among exited employees, what was the average tenure in years?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT ROUND(CAST(AVG((\"e\".\"exit_date\" - \"e\".\"hire_date\") / 365.25) AS DECIMAL), 2) AS \"avg_tenure_years\" FROM \"employees\" AS \"e\" WHERE \"e\".\"status\" = 'exited' LIMIT 200"
+   ],
+   "answer": "2.28 years is the average tenure among exited employees.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2916,
+   "tokens": 4096,
+   "agent_usage": {
+    "input_tokens": 3963,
+    "output_tokens": 133,
+    "cost_usd": 0.001706
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001028,
+    "generate_answer (gpt-5.4-mini)": 0.000649
+   },
+   "judge_usage": {
+    "input_tokens": 308,
+    "output_tokens": 17,
+    "cost_usd": 0.0003075
+   }
+  },
+  {
+   "question": "How many candidates applied in total?",
+   "passed": false,
+   "checks": {
+    "route": true,
+    "facts": false,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"total_candidates_applied\" FROM \"candidates\" AS \"c\" WHERE \"c\".\"stage\" = 'applied' LIMIT 200"
+   ],
+   "answer": "28 candidates are currently in the applied stage.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2867,
+   "tokens": 3991,
+   "agent_usage": {
+    "input_tokens": 3896,
+    "output_tokens": 95,
+    "cost_usd": 0.001488
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000863,
+    "generate_answer (gpt-5.4-mini)": 0.000596
+   },
+   "judge_usage": {
+    "input_tokens": 263,
+    "output_tokens": 17,
+    "cost_usd": 0.00027375
+   }
+  },
+  {
+   "question": "How many candidates were rejected?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"rejected_candidates\" FROM \"candidates\" AS \"c\" WHERE \"c\".\"stage\" = 'rejected' LIMIT 200"
+   ],
+   "answer": "236 candidates were rejected.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2599,
+   "tokens": 3978,
+   "agent_usage": {
+    "input_tokens": 3890,
+    "output_tokens": 88,
+    "cost_usd": 0.001453
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000849,
+    "generate_answer (gpt-5.4-mini)": 0.000575
+   },
+   "judge_usage": {
+    "input_tokens": 256,
+    "output_tokens": 17,
+    "cost_usd": 0.0002685
+   }
+  },
+  {
+   "question": "How many candidates are currently at the offer stage?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"candidates_at_offer_stage\" FROM \"candidates\" AS \"c\" WHERE \"c\".\"stage\" = 'offer' LIMIT 200"
+   ],
+   "answer": "9 candidates are currently at the offer stage.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3018,
+   "tokens": 3998,
+   "agent_usage": {
+    "input_tokens": 3905,
+    "output_tokens": 93,
+    "cost_usd": 0.0014850000000000002
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000857,
+    "generate_answer (gpt-5.4-mini)": 0.000599
+   },
+   "judge_usage": {
+    "input_tokens": 267,
+    "output_tokens": 17,
+    "cost_usd": 0.00027675000000000003
+   }
+  },
+  {
+   "question": "How many candidates are currently in screening?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"screening_candidates\" FROM \"candidates\" AS \"c\" WHERE \"c\".\"stage\" = 'screen' LIMIT 200"
+   ],
+   "answer": "36 candidates are currently in screening.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2638,
+   "tokens": 3984,
+   "agent_usage": {
+    "input_tokens": 3895,
+    "output_tokens": 89,
+    "cost_usd": 0.00146
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000846,
+    "generate_answer (gpt-5.4-mini)": 0.000585
+   },
+   "judge_usage": {
+    "input_tokens": 259,
+    "output_tokens": 17,
+    "cost_usd": 0.00027075
+   }
+  },
+  {
+   "question": "How many candidates came through Referral?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"candidates\" FROM \"candidates\" AS \"c\" WHERE \"c\".\"source\" = 'Referral' LIMIT 200"
+   ],
+   "answer": "74 candidates came through Referral.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2528,
+   "tokens": 3977,
+   "agent_usage": {
+    "input_tokens": 3891,
+    "output_tokens": 86,
+    "cost_usd": 0.0014420000000000001
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000836,
+    "generate_answer (gpt-5.4-mini)": 0.000577
+   },
+   "judge_usage": {
+    "input_tokens": 255,
+    "output_tokens": 17,
+    "cost_usd": 0.00026775000000000003
+   }
+  },
+  {
+   "question": "How many candidates applied through Campus hiring?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"candidates_applied\" FROM \"candidates\" AS \"c\" WHERE \"c\".\"source\" = 'Campus' LIMIT 200"
+   ],
+   "answer": "88 candidates applied through Campus hiring.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3080,
+   "tokens": 3985,
+   "agent_usage": {
+    "input_tokens": 3896,
+    "output_tokens": 89,
+    "cost_usd": 0.001461
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000846,
+    "generate_answer (gpt-5.4-mini)": 0.000586
+   },
+   "judge_usage": {
+    "input_tokens": 261,
+    "output_tokens": 17,
+    "cost_usd": 0.00027225000000000003
+   }
+  },
+  {
+   "question": "Which sourcing channel brought in the most applicants overall?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"c\".\"source\" AS \"sourcing_channel\", COUNT(*) AS \"applicants\" FROM \"candidates\" AS \"c\" WHERE \"c\".\"source\" IS NOT NULL GROUP BY \"c\".\"source\" ORDER BY \"applicants\" DESC LIMIT 1"
+   ],
+   "answer": "LinkedIn brought in the most applicants overall, with 94 applicants.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2485,
+   "tokens": 4169,
+   "agent_usage": {
+    "input_tokens": 4050,
+    "output_tokens": 119,
+    "cost_usd": 0.0013640000000000002
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000684,
+    "generate_answer (gpt-5.4-mini)": 0.000651
+   },
+   "judge_usage": {
+    "input_tokens": 304,
+    "output_tokens": 17,
+    "cost_usd": 0.00030450000000000003
+   }
+  },
+  {
+   "question": "How many hires came from LinkedIn?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"hires_from_linkedin\" FROM \"candidates\" AS \"c\" WHERE \"c\".\"stage\" = 'hired' AND \"c\".\"source\" = 'LinkedIn' LIMIT 200"
+   ],
+   "answer": "26 employees were hired from LinkedIn.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2521,
+   "tokens": 3952,
+   "agent_usage": {
+    "input_tokens": 3850,
+    "output_tokens": 102,
+    "cost_usd": 0.001484
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000852,
+    "generate_answer (gpt-5.4-mini)": 0.000603
+   },
+   "judge_usage": {
+    "input_tokens": 277,
+    "output_tokens": 17,
+    "cost_usd": 0.00028425
+   }
+  },
+  {
+   "question": "What share of all candidates ended up hired, as a percentage?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT ROUND(CAST(100.0 * COUNT(*) FILTER(WHERE \"candidates\".\"stage\" = 'hired') / NULLIF(COUNT(*), 0) AS DECIMAL), 2) AS \"hired_share_pct\" FROM \"candidates\" AS \"candidates\" LIMIT 200"
+   ],
+   "answer": "33.54% of all candidates ended up hired.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3281,
+   "tokens": 4038,
+   "agent_usage": {
+    "input_tokens": 3920,
+    "output_tokens": 118,
+    "cost_usd": 0.0016060000000000002
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000942,
+    "generate_answer (gpt-5.4-mini)": 0.000635
+   },
+   "judge_usage": {
+    "input_tokens": 302,
+    "output_tokens": 17,
+    "cost_usd": 0.000303
+   }
+  },
+  {
+   "question": "What is the offer acceptance rate (hired divided by candidates who reached offer or hired)?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT ROUND(CAST(100.0 * COUNT(*) FILTER(WHERE \"c\".\"stage\" = 'hired') / NULLIF(COUNT(*) FILTER(WHERE \"c\".\"stage\" IN ('offer', 'hired')), 0) AS DECIMAL), 1) AS \"offer_acceptance_rate\" FROM \"candidates\" AS \"c\" LIMIT 200"
+   ],
+   "answer": "94.8% of candidates who reached offer or hired were hired.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3113,
+   "tokens": 4229,
+   "agent_usage": {
+    "input_tokens": 4087,
+    "output_tokens": 142,
+    "cost_usd": 0.003045
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.002349,
+    "generate_answer (gpt-5.4-mini)": 0.000667
+   },
+   "judge_usage": {
+    "input_tokens": 324,
+    "output_tokens": 17,
+    "cost_usd": 0.0003195
+   }
+  },
+  {
+   "question": "How many candidates applied in 2025?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"candidates_applied\" FROM \"candidates\" AS \"c\" WHERE \"c\".\"applied_at\" >= '2025-01-01' AND \"c\".\"applied_at\" < '2026-01-01' LIMIT 200"
+   ],
+   "answer": "137 candidates applied in 2025.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2461,
+   "tokens": 4047,
+   "agent_usage": {
+    "input_tokens": 3931,
+    "output_tokens": 116,
+    "cost_usd": 0.001607
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000964,
+    "generate_answer (gpt-5.4-mini)": 0.000614
+   },
+   "judge_usage": {
+    "input_tokens": 288,
+    "output_tokens": 17,
+    "cost_usd": 0.0002925
+   }
+  },
+  {
+   "question": "How many candidates have applied for Engineering openings?",
+   "passed": false,
+   "checks": {
+    "route": true,
+    "facts": false,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"candidates_applied\" FROM \"candidates\" AS \"c\" JOIN \"job_openings\" AS \"o\" ON \"o\".\"opening_id\" = \"c\".\"opening_id\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"o\".\"department_id\" WHERE \"d\".\"name\" = 'Engineering' AND \"c\".\"stage\" = 'applied' LIMIT 200"
+   ],
+   "answer": "11 candidates have applied for Engineering openings.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2934,
+   "tokens": 4096,
+   "agent_usage": {
+    "input_tokens": 3967,
+    "output_tokens": 129,
+    "cost_usd": 0.002903
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.002232,
+    "generate_answer (gpt-5.4-mini)": 0.000642
+   },
+   "judge_usage": {
+    "input_tokens": 326,
+    "output_tokens": 17,
+    "cost_usd": 0.000321
+   }
+  },
+  {
+   "question": "Which department's openings received the most applicants?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"d\".\"name\" AS \"department\", COUNT(*) AS \"applicants\" FROM \"candidates\" AS \"c\" JOIN \"job_openings\" AS \"o\" ON \"o\".\"opening_id\" = \"c\".\"opening_id\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"o\".\"department_id\" GROUP BY \"d\".\"name\" ORDER BY \"applicants\" DESC LIMIT 200"
+   ],
+   "answer": "Engineering openings received the most applicants, with 173 applicants.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2631,
+   "tokens": 4272,
+   "agent_usage": {
+    "input_tokens": 4136,
+    "output_tokens": 136,
+    "cost_usd": 0.001506
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000776,
+    "generate_answer (gpt-5.4-mini)": 0.000701
+   },
+   "judge_usage": {
+    "input_tokens": 381,
+    "output_tokens": 17,
+    "cost_usd": 0.00036225000000000005
+   }
+  },
+  {
+   "question": "What is the average time to hire in days (from the opening date to the hired candidate's last stage change)?",
+   "passed": false,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": false
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT ROUND(CAST(AVG(\"c\".\"stage_updated_at\" - \"o\".\"opened_at\") AS DECIMAL), 1) AS \"avg_days_to_hire\" FROM \"candidates\" AS \"c\" JOIN \"job_openings\" AS \"o\" ON \"o\".\"opening_id\" = \"c\".\"opening_id\" WHERE \"c\".\"stage\" = 'hired' LIMIT 200"
+   ],
+   "answer": "60.3 employees are the average time to hire in days from opening date to the hired candidate\u2019s last stage change.",
+   "unsupported_claims": [
+    "\"employees\" are the average time to hire in days from opening date to the hired candidate\u2019s last stage change."
+   ],
+   "error": null,
+   "latency_ms": 3046,
+   "tokens": 4332,
+   "agent_usage": {
+    "input_tokens": 4175,
+    "output_tokens": 157,
+    "cost_usd": 0.00162
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 3e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000862,
+    "generate_answer (gpt-5.4-mini)": 0.000728
+   },
+   "judge_usage": {
+    "input_tokens": 350,
+    "output_tokens": 41,
+    "cost_usd": 0.000447
+   }
+  },
+  {
+   "question": "What is the highest number of candidates any single job opening has received?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT MAX(\"x\".\"candidate_count\") AS \"highest_candidates_received\" FROM (SELECT \"c\".\"opening_id\" AS \"opening_id\", COUNT(*) AS \"candidate_count\" FROM \"candidates\" AS \"c\" GROUP BY \"c\".\"opening_id\") AS \"x\" LIMIT 200"
+   ],
+   "answer": "16 candidates were received by the single job opening with the highest applicant count.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2438,
+   "tokens": 4191,
+   "agent_usage": {
+    "input_tokens": 4062,
+    "output_tokens": 129,
+    "cost_usd": 0.001761
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001073,
+    "generate_answer (gpt-5.4-mini)": 0.000659
+   },
+   "judge_usage": {
+    "input_tokens": 303,
+    "output_tokens": 17,
+    "cost_usd": 0.00030375
+   }
+  },
+  {
+   "question": "How many hires did the Sales department make through the hiring funnel?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"hires\" FROM \"candidates\" AS \"c\" JOIN \"job_openings\" AS \"o\" ON \"o\".\"opening_id\" = \"c\".\"opening_id\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"o\".\"department_id\" WHERE \"d\".\"name\" = 'Sales' AND \"c\".\"stage\" = 'hired' LIMIT 200"
+   ],
+   "answer": "37 hires were made by the Sales department through the hiring funnel.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2541,
+   "tokens": 4200,
+   "agent_usage": {
+    "input_tokens": 4066,
+    "output_tokens": 134,
+    "cost_usd": 0.001787
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001092,
+    "generate_answer (gpt-5.4-mini)": 0.000666
+   },
+   "judge_usage": {
+    "input_tokens": 331,
+    "output_tokens": 17,
+    "cost_usd": 0.00032475
+   }
+  },
+  {
+   "question": "How many job openings have there been in total?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"total_job_openings\" FROM \"job_openings\" AS \"job_openings\" LIMIT 200"
+   ],
+   "answer": "45 job openings have been counted in total.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2531,
+   "tokens": 3922,
+   "agent_usage": {
+    "input_tokens": 3833,
+    "output_tokens": 89,
+    "cost_usd": 0.001413
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000791,
+    "generate_answer (gpt-5.4-mini)": 0.000593
+   },
+   "judge_usage": {
+    "input_tokens": 257,
+    "output_tokens": 17,
+    "cost_usd": 0.00026925
+   }
+  },
+  {
+   "question": "Which department has the most open job openings right now?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"d\".\"name\" AS \"department\", COUNT(*) AS \"open_job_openings\" FROM \"job_openings\" AS \"j\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"j\".\"department_id\" WHERE \"j\".\"status\" = 'open' GROUP BY \"d\".\"name\" ORDER BY \"open_job_openings\" DESC LIMIT 1"
+   ],
+   "answer": "Engineering has the most open job openings right now, with 5 openings.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2962,
+   "tokens": 4226,
+   "agent_usage": {
+    "input_tokens": 4087,
+    "output_tokens": 139,
+    "cost_usd": 0.0014810000000000001
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000777,
+    "generate_answer (gpt-5.4-mini)": 0.000675
+   },
+   "judge_usage": {
+    "input_tokens": 331,
+    "output_tokens": 17,
+    "cost_usd": 0.00032475
+   }
+  },
+  {
+   "question": "How many job openings were opened in 2025?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"job_openings_opened_in_2025\" FROM \"job_openings\" AS \"o\" WHERE \"o\".\"opened_at\" >= '2025-01-01' AND \"o\".\"opened_at\" < '2026-01-01' LIMIT 200"
+   ],
+   "answer": "12 job openings were opened in 2025.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2776,
+   "tokens": 4014,
+   "agent_usage": {
+    "input_tokens": 3885,
+    "output_tokens": 129,
+    "cost_usd": 0.0016289999999999998
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000967,
+    "generate_answer (gpt-5.4-mini)": 0.000633
+   },
+   "judge_usage": {
+    "input_tokens": 301,
+    "output_tokens": 17,
+    "cost_usd": 0.00030225
+   }
+  },
+  {
+   "question": "How many open positions are there in Engineering?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"open_positions\" FROM \"job_openings\" AS \"o\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"o\".\"department_id\" WHERE \"o\".\"status\" = 'open' AND \"d\".\"name\" = 'Engineering' LIMIT 200"
+   ],
+   "answer": "5 open positions are currently in Engineering.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2390,
+   "tokens": 4048,
+   "agent_usage": {
+    "input_tokens": 3938,
+    "output_tokens": 110,
+    "cost_usd": 0.001586
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000941,
+    "generate_answer (gpt-5.4-mini)": 0.000616
+   },
+   "judge_usage": {
+    "input_tokens": 296,
+    "output_tokens": 17,
+    "cost_usd": 0.0002985
+   }
+  },
+  {
+   "question": "For closed openings, what is the average number of days they stayed open?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT ROUND(CAST(AVG(\"o\".\"closed_at\" - \"o\".\"opened_at\") AS DECIMAL), 1) AS \"avg_days_open\" FROM \"job_openings\" AS \"o\" WHERE \"o\".\"status\" = 'closed' AND \"o\".\"opened_at\" IS NOT NULL AND \"o\".\"closed_at\" IS NOT NULL LIMIT 200"
+   ],
+   "answer": "56.8 days is the average time closed openings stayed open.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2990,
+   "tokens": 4241,
+   "agent_usage": {
+    "input_tokens": 4102,
+    "output_tokens": 139,
+    "cost_usd": 0.001489
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000798,
+    "generate_answer (gpt-5.4-mini)": 0.000662
+   },
+   "judge_usage": {
+    "input_tokens": 322,
+    "output_tokens": 17,
+    "cost_usd": 0.00031800000000000003
+   }
+  },
+  {
+   "question": "How many sick leave requests have been made?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"sick_leave_requests\" FROM \"leave_requests\" AS \"l\" WHERE \"l\".\"leave_type\" = 'sick' LIMIT 200"
+   ],
+   "answer": "1067 sick leave requests have been made.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2110,
+   "tokens": 4037,
+   "agent_usage": {
+    "input_tokens": 3940,
+    "output_tokens": 97,
+    "cost_usd": 0.001529
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.0009,
+    "generate_answer (gpt-5.4-mini)": 0.0006
+   },
+   "judge_usage": {
+    "input_tokens": 267,
+    "output_tokens": 17,
+    "cost_usd": 0.00027675000000000003
+   }
+  },
+  {
+   "question": "How many paternity leave requests are there?",
+   "passed": false,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": false
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"paternity_leave_requests\" FROM \"leave_requests\" AS \"l\" WHERE \"l\".\"leave_type\" = 'paternity' LIMIT 200"
+   ],
+   "answer": "74 employees are currently active.",
+   "unsupported_claims": [
+    "74 employees are currently active."
+   ],
+   "error": null,
+   "latency_ms": 2454,
+   "tokens": 4037,
+   "agent_usage": {
+    "input_tokens": 3941,
+    "output_tokens": 96,
+    "cost_usd": 0.0015240000000000002
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000909,
+    "generate_answer (gpt-5.4-mini)": 0.000586
+   },
+   "judge_usage": {
+    "input_tokens": 263,
+    "output_tokens": 24,
+    "cost_usd": 0.00030524999999999997
+   }
+  },
+  {
+   "question": "How many leave requests were rejected?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"rejected_leave_requests\" FROM \"leave_requests\" AS \"l\" WHERE \"l\".\"status\" = 'rejected' LIMIT 200"
+   ],
+   "answer": "234 leave requests were rejected.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2188,
+   "tokens": 4019,
+   "agent_usage": {
+    "input_tokens": 3929,
+    "output_tokens": 90,
+    "cost_usd": 0.0026999999999999997
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.00209,
+    "generate_answer (gpt-5.4-mini)": 0.000581
+   },
+   "judge_usage": {
+    "input_tokens": 260,
+    "output_tokens": 17,
+    "cost_usd": 0.0002715
+   }
+  },
+  {
+   "question": "What is the total number of approved earned leave days?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT SUM(\"l\".\"days\") AS \"total_earned_leave_days\" FROM \"leave_requests\" AS \"l\" WHERE \"l\".\"leave_type\" = 'earned' AND \"l\".\"status\" = 'approved' LIMIT 200"
+   ],
+   "answer": "1273 approved earned leave days were counted.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2841,
+   "tokens": 4198,
+   "agent_usage": {
+    "input_tokens": 4091,
+    "output_tokens": 107,
+    "cost_usd": 0.001686
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001041,
+    "generate_answer (gpt-5.4-mini)": 0.000616
+   },
+   "judge_usage": {
+    "input_tokens": 288,
+    "output_tokens": 17,
+    "cost_usd": 0.0002925
+   }
+  },
+  {
+   "question": "Which leave type has the most requests?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"l\".\"leave_type\" AS \"leave_type\", COUNT(*) AS \"request_count\" FROM \"leave_requests\" AS \"l\" GROUP BY \"l\".\"leave_type\" ORDER BY \"request_count\" DESC LIMIT 1"
+   ],
+   "answer": "The **casual** leave type has the most requests, with **1,598** requests.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2762,
+   "tokens": 4212,
+   "agent_usage": {
+    "input_tokens": 4088,
+    "output_tokens": 124,
+    "cost_usd": 0.001417
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.00072,
+    "generate_answer (gpt-5.4-mini)": 0.000668
+   },
+   "judge_usage": {
+    "input_tokens": 296,
+    "output_tokens": 17,
+    "cost_usd": 0.0002985
+   }
+  },
+  {
+   "question": "What is the average length in days of an approved sick leave request?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT ROUND(CAST(AVG(\"l\".\"days\") AS DECIMAL), 2) AS \"avg_sick_leave_days\" FROM \"leave_requests\" AS \"l\" WHERE \"l\".\"leave_type\" = 'sick' AND \"l\".\"status\" = 'approved' LIMIT 200"
+   ],
+   "answer": "1.75 days is the average length of an approved sick leave request.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2857,
+   "tokens": 4235,
+   "agent_usage": {
+    "input_tokens": 4112,
+    "output_tokens": 123,
+    "cost_usd": 0.002981
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.002298,
+    "generate_answer (gpt-5.4-mini)": 0.000654
+   },
+   "judge_usage": {
+    "input_tokens": 308,
+    "output_tokens": 17,
+    "cost_usd": 0.0003075
+   }
+  },
+  {
+   "question": "How many leave requests start in 2025?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"leave_requests_starting_2025\" FROM \"leave_requests\" AS \"l\" WHERE \"l\".\"start_date\" >= CAST('2025-01-01' AS DATE) AND \"l\".\"start_date\" < CAST('2026-01-01' AS DATE) LIMIT 200"
+   ],
+   "answer": "1080 leave requests start in 2025.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2899,
+   "tokens": 4107,
+   "agent_usage": {
+    "input_tokens": 3983,
+    "output_tokens": 124,
+    "cost_usd": 0.001681
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001018,
+    "generate_answer (gpt-5.4-mini)": 0.000634
+   },
+   "judge_usage": {
+    "input_tokens": 304,
+    "output_tokens": 17,
+    "cost_usd": 0.00030450000000000003
+   }
+  },
+  {
+   "question": "How many leave requests are for future dates, starting after today?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"future_leave_requests\" FROM \"leave_requests\" AS \"lr\" WHERE \"lr\".\"start_date\" > CURRENT_DATE LIMIT 200"
+   ],
+   "answer": "9 leave requests are for future dates, starting after today.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2455,
+   "tokens": 4097,
+   "agent_usage": {
+    "input_tokens": 4000,
+    "output_tokens": 97,
+    "cost_usd": 0.001226
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000585,
+    "generate_answer (gpt-5.4-mini)": 0.000612
+   },
+   "judge_usage": {
+    "input_tokens": 269,
+    "output_tokens": 17,
+    "cost_usd": 0.00027825
+   }
+  },
+  {
+   "question": "Which department has taken the most approved sick leave days?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"d\".\"name\" AS \"department\", SUM(\"l\".\"days\") AS \"sick_leave_days\" FROM \"leave_requests\" AS \"l\" JOIN \"employees\" AS \"e\" ON \"e\".\"employee_id\" = \"l\".\"employee_id\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"e\".\"department_id\" WHERE \"l\".\"leave_type\" = 'sick' AND \"l\".\"status\" = 'approved' GROUP BY \"d\".\"name\" ORDER BY \"sick_leave_days\" DESC LIMIT 1"
+   ],
+   "answer": "Engineering has taken the most approved sick leave days, with 603.5 days.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2911,
+   "tokens": 4314,
+   "agent_usage": {
+    "input_tokens": 4148,
+    "output_tokens": 166,
+    "cost_usd": 0.001994
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001245,
+    "generate_answer (gpt-5.4-mini)": 0.00072
+   },
+   "judge_usage": {
+    "input_tokens": 376,
+    "output_tokens": 17,
+    "cost_usd": 0.00035850000000000004
+   }
+  },
+  {
+   "question": "How many half-day leave requests (0.5 days) have been made?",
+   "passed": false,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": false
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"half_day_leave_requests\" FROM \"leave_requests\" AS \"l\" WHERE \"l\".\"days\" = 0.5 LIMIT 200"
+   ],
+   "answer": "345 employees are currently active.",
+   "unsupported_claims": [
+    "345 employees are currently active."
+   ],
+   "error": null,
+   "latency_ms": 2175,
+   "tokens": 4051,
+   "agent_usage": {
+    "input_tokens": 3958,
+    "output_tokens": 93,
+    "cost_usd": 0.001519
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000901,
+    "generate_answer (gpt-5.4-mini)": 0.000589
+   },
+   "judge_usage": {
+    "input_tokens": 269,
+    "output_tokens": 24,
+    "cost_usd": 0.00030975
+   }
+  },
+  {
+   "question": "How many pending casual leave requests are there?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"pending_casual_leave_requests\" FROM \"leave_requests\" AS \"l\" WHERE \"l\".\"leave_type\" = 'casual' AND \"l\".\"status\" = 'pending' LIMIT 200"
+   ],
+   "answer": "128 employees have pending casual leave requests.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2614,
+   "tokens": 4050,
+   "agent_usage": {
+    "input_tokens": 3949,
+    "output_tokens": 101,
+    "cost_usd": 0.0015539999999999998
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000923,
+    "generate_answer (gpt-5.4-mini)": 0.000602
+   },
+   "judge_usage": {
+    "input_tokens": 280,
+    "output_tokens": 17,
+    "cost_usd": 0.0002865
+   }
+  },
+  {
+   "question": "What percentage of leave requests have been approved?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT ROUND(CAST(100.0 * COUNT(*) FILTER(WHERE \"leave_requests\".\"status\" = 'approved') / NULLIF(COUNT(*), 0) AS DECIMAL), 2) AS \"approved_leave_percentage\" FROM \"leave_requests\" AS \"leave_requests\" LIMIT 200"
+   ],
+   "answer": "85.34% of leave requests have been approved.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2728,
+   "tokens": 4091,
+   "agent_usage": {
+    "input_tokens": 3970,
+    "output_tokens": 121,
+    "cost_usd": 0.00166
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000999,
+    "generate_answer (gpt-5.4-mini)": 0.000632
+   },
+   "judge_usage": {
+    "input_tokens": 295,
+    "output_tokens": 17,
+    "cost_usd": 0.00029775
+   }
+  },
+  {
+   "question": "Which employee has the highest total of approved leave days? Give the name.",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"e\".\"full_name\" AS \"employee_name\", SUM(\"l\".\"days\") AS \"approved_leave_days\" FROM \"leave_requests\" AS \"l\" JOIN \"employees\" AS \"e\" ON \"e\".\"employee_id\" = \"l\".\"employee_id\" WHERE \"l\".\"status\" = 'approved' GROUP BY \"e\".\"full_name\" ORDER BY \"approved_leave_days\" DESC LIMIT 1"
+   ],
+   "answer": "Anika Bose has the highest total of approved leave days.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2649,
+   "tokens": 4303,
+   "agent_usage": {
+    "input_tokens": 4159,
+    "output_tokens": 144,
+    "cost_usd": 0.0018999999999999998
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001197,
+    "generate_answer (gpt-5.4-mini)": 0.000674
+   },
+   "judge_usage": {
+    "input_tokens": 340,
+    "output_tokens": 17,
+    "cost_usd": 0.00033150000000000003
+   }
+  },
+  {
+   "question": "How many attendance records are marked absent?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"absent_records\" FROM \"attendance\" AS \"a\" WHERE \"a\".\"status\" = 'absent' LIMIT 200"
+   ],
+   "answer": "372 attendance records are marked absent.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2468,
+   "tokens": 3915,
+   "agent_usage": {
+    "input_tokens": 3828,
+    "output_tokens": 87,
+    "cost_usd": 0.001401
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000789,
+    "generate_answer (gpt-5.4-mini)": 0.000583
+   },
+   "judge_usage": {
+    "input_tokens": 259,
+    "output_tokens": 17,
+    "cost_usd": 0.00027075
+   }
+  },
+  {
+   "question": "How many work-from-home days were recorded in attendance?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"wfh_days\" FROM \"attendance\" AS \"a\" WHERE \"a\".\"status\" = 'wfh' LIMIT 200"
+   ],
+   "answer": "5478 work-from-home days were recorded in attendance.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2243,
+   "tokens": 4037,
+   "agent_usage": {
+    "input_tokens": 3941,
+    "output_tokens": 96,
+    "cost_usd": 0.0015240000000000002
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000888,
+    "generate_answer (gpt-5.4-mini)": 0.000607
+   },
+   "judge_usage": {
+    "input_tokens": 267,
+    "output_tokens": 17,
+    "cost_usd": 0.00027675000000000003
+   }
+  },
+  {
+   "question": "What is the earliest date in the attendance data?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT MIN(\"a\".\"date\") AS \"earliest_date\" FROM \"attendance\" AS \"a\" LIMIT 200"
+   ],
+   "answer": "2026-07-20 is the earliest attendance date recorded in the attendance data.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2460,
+   "tokens": 4103,
+   "agent_usage": {
+    "input_tokens": 4006,
+    "output_tokens": 97,
+    "cost_usd": 0.001233
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000572,
+    "generate_answer (gpt-5.4-mini)": 0.000632
+   },
+   "judge_usage": {
+    "input_tokens": 269,
+    "output_tokens": 17,
+    "cost_usd": 0.00027825
+   }
+  },
+  {
+   "question": "On what percentage of attendance records were employees present in the office?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT ROUND(CAST(100.0 * COUNT(*) FILTER(WHERE \"a\".\"status\" = 'present') / NULLIF(COUNT(*), 0) AS DECIMAL), 1) AS \"present_pct\" FROM \"attendance\" AS \"a\" LIMIT 200"
+   ],
+   "answer": "62.1% of attendance records were marked present in the office.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2662,
+   "tokens": 4153,
+   "agent_usage": {
+    "input_tokens": 4030,
+    "output_tokens": 123,
+    "cost_usd": 0.001365
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000693,
+    "generate_answer (gpt-5.4-mini)": 0.000643
+   },
+   "judge_usage": {
+    "input_tokens": 297,
+    "output_tokens": 17,
+    "cost_usd": 0.00029925
+   }
+  },
+  {
+   "question": "How many distinct employees have at least one absent day in the attendance data?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(DISTINCT \"a\".\"employee_id\") AS \"employees_with_absence\" FROM \"attendance\" AS \"a\" WHERE \"a\".\"status\" = 'absent' LIMIT 200"
+   ],
+   "answer": "259 employees have at least one absent day in the attendance data.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2522,
+   "tokens": 4128,
+   "agent_usage": {
+    "input_tokens": 4020,
+    "output_tokens": 108,
+    "cost_usd": 0.001635
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000977,
+    "generate_answer (gpt-5.4-mini)": 0.000629
+   },
+   "judge_usage": {
+    "input_tokens": 283,
+    "output_tokens": 17,
+    "cost_usd": 0.00028875
+   }
+  },
+  {
+   "question": "Which department has the most absent days in the attendance records?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"d\".\"name\" AS \"department\", COUNT(*) AS \"absent_days\" FROM \"attendance\" AS \"a\" JOIN \"employees\" AS \"e\" ON \"e\".\"employee_id\" = \"a\".\"employee_id\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"e\".\"department_id\" WHERE \"a\".\"status\" = 'absent' GROUP BY \"d\".\"name\" ORDER BY \"absent_days\" DESC LIMIT 200"
+   ],
+   "answer": "Engineering has the most absent days in the attendance records, with 153 absent days.\n\n| Department | Absent days |\n|---|---:|\n| Engineering | 153 |\n| Sales | 59 |\n| Product | 40 |\n| Customer Success | 34 |\n| Marketing | 30 |\n| People Operations | 22 |\n| Finance | 21 |\n| IT | 13 |\n\nEngineering is well ahead of the next highest department, Sales.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3414,
+   "tokens": 4375,
+   "agent_usage": {
+    "input_tokens": 4153,
+    "output_tokens": 222,
+    "cost_usd": 0.001904
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000805,
+    "generate_answer (gpt-5.4-mini)": 0.00107
+   },
+   "judge_usage": {
+    "input_tokens": 473,
+    "output_tokens": 17,
+    "cost_usd": 0.00043125000000000005
+   }
+  },
+  {
+   "question": "How many attendance records were logged in August 2026?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"attendance_records\" FROM \"attendance\" AS \"a\" WHERE \"a\".\"date\" >= CAST('2026-08-01' AS DATE) AND \"a\".\"date\" < CAST('2026-09-01' AS DATE) LIMIT 200"
+   ],
+   "answer": "8947 attendance records were logged in August 2026.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3560,
+   "tokens": 4088,
+   "agent_usage": {
+    "input_tokens": 3970,
+    "output_tokens": 118,
+    "cost_usd": 0.001642
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000979,
+    "generate_answer (gpt-5.4-mini)": 0.000634
+   },
+   "judge_usage": {
+    "input_tokens": 295,
+    "output_tokens": 17,
+    "cost_usd": 0.00029775
+   }
+  },
+  {
+   "question": "Which city has the most work-from-home attendance records?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"l\".\"city\" AS \"city\", COUNT(*) AS \"wfh_records\" FROM \"attendance\" AS \"a\" JOIN \"employees\" AS \"e\" ON \"e\".\"employee_id\" = \"a\".\"employee_id\" JOIN \"locations\" AS \"l\" ON \"l\".\"location_id\" = \"e\".\"location_id\" WHERE \"a\".\"status\" = 'wfh' GROUP BY \"l\".\"city\" ORDER BY \"wfh_records\" DESC LIMIT 200"
+   ],
+   "answer": "Gurugram has the most work-from-home attendance records, with 1,483 records.\n\n| City | Work-from-home attendance records |\n|---|---:|\n| Gurugram | 1,483 |\n| Bengaluru | 1,477 |\n| Hyderabad | 1,285 |\n| Pune | 1,233 |",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3048,
+   "tokens": 4330,
+   "agent_usage": {
+    "input_tokens": 4128,
+    "output_tokens": 202,
+    "cost_usd": 0.0017950000000000002
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000811,
+    "generate_answer (gpt-5.4-mini)": 0.000955
+   },
+   "judge_usage": {
+    "input_tokens": 434,
+    "output_tokens": 17,
+    "cost_usd": 0.000402
+   }
+  },
+  {
+   "question": "How many performance reviews have been recorded in total?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"performance_reviews\" FROM \"performance_reviews\" AS \"performance_reviews\" LIMIT 200"
+   ],
+   "answer": "1349 performance reviews have been recorded in total.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2529,
+   "tokens": 3958,
+   "agent_usage": {
+    "input_tokens": 3871,
+    "output_tokens": 87,
+    "cost_usd": 0.002641
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.002019,
+    "generate_answer (gpt-5.4-mini)": 0.000593
+   },
+   "judge_usage": {
+    "input_tokens": 253,
+    "output_tokens": 17,
+    "cost_usd": 0.00026625
+   }
+  },
+  {
+   "question": "How many review cycles are there in the data?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(DISTINCT \"performance_reviews\".\"cycle\") AS \"review_cycles\" FROM \"performance_reviews\" AS \"performance_reviews\" LIMIT 200"
+   ],
+   "answer": "5 review cycles are present in the data.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2688,
+   "tokens": 4081,
+   "agent_usage": {
+    "input_tokens": 3990,
+    "output_tokens": 91,
+    "cost_usd": 0.001194
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000569,
+    "generate_answer (gpt-5.4-mini)": 0.000596
+   },
+   "judge_usage": {
+    "input_tokens": 260,
+    "output_tokens": 17,
+    "cost_usd": 0.0002715
+   }
+  },
+  {
+   "question": "What is the average performance rating in the 2024-H1 cycle?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT ROUND(CAST(AVG(\"pr\".\"rating\") AS DECIMAL), 2) AS \"avg_performance_rating\" FROM \"performance_reviews\" AS \"pr\" WHERE \"pr\".\"cycle\" = '2024-H1' LIMIT 200"
+   ],
+   "answer": "The average performance rating in the 2024-H1 cycle is 3.22.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2682,
+   "tokens": 4177,
+   "agent_usage": {
+    "input_tokens": 4053,
+    "output_tokens": 124,
+    "cost_usd": 0.001384
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000693,
+    "generate_answer (gpt-5.4-mini)": 0.000662
+   },
+   "judge_usage": {
+    "input_tokens": 300,
+    "output_tokens": 17,
+    "cost_usd": 0.0003015
+   }
+  },
+  {
+   "question": "Which review cycle had the highest average rating?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"pr\".\"cycle\" AS \"review_cycle\", AVG(\"pr\".\"rating\") AS \"avg_rating\" FROM \"performance_reviews\" AS \"pr\" GROUP BY \"pr\".\"cycle\" ORDER BY \"avg_rating\" DESC LIMIT 1"
+   ],
+   "answer": "The 2025-H1 review cycle had the highest average rating, at 3.35.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3018,
+   "tokens": 4168,
+   "agent_usage": {
+    "input_tokens": 4043,
+    "output_tokens": 125,
+    "cost_usd": 0.0013870000000000002
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000684,
+    "generate_answer (gpt-5.4-mini)": 0.000674
+   },
+   "judge_usage": {
+    "input_tokens": 307,
+    "output_tokens": 17,
+    "cost_usd": 0.00030675
+   }
+  },
+  {
+   "question": "How many reviews gave the lowest possible rating of 1?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"lowest_rating_reviews\" FROM \"performance_reviews\" AS \"pr\" WHERE \"pr\".\"rating\" = 1 LIMIT 200"
+   ],
+   "answer": "41 performance reviews gave the lowest possible rating of 1.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2734,
+   "tokens": 4096,
+   "agent_usage": {
+    "input_tokens": 3998,
+    "output_tokens": 98,
+    "cost_usd": 0.001229
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000588,
+    "generate_answer (gpt-5.4-mini)": 0.000612
+   },
+   "judge_usage": {
+    "input_tokens": 267,
+    "output_tokens": 17,
+    "cost_usd": 0.00027675000000000003
+   }
+  },
+  {
+   "question": "Which department had the highest average rating in the 2026-H1 cycle?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"d\".\"name\" AS \"department\", AVG(\"pr\".\"rating\") AS \"avg_rating\" FROM \"performance_reviews\" AS \"pr\" JOIN \"employees\" AS \"e\" ON \"e\".\"employee_id\" = \"pr\".\"employee_id\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"e\".\"department_id\" WHERE \"pr\".\"cycle\" = '2026-H1' GROUP BY \"d\".\"name\" ORDER BY \"avg_rating\" DESC LIMIT 1"
+   ],
+   "answer": "Engineering had the highest average performance rating in the 2026-H1 cycle, with an average rating of 3.36.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2712,
+   "tokens": 4296,
+   "agent_usage": {
+    "input_tokens": 4130,
+    "output_tokens": 166,
+    "cost_usd": 0.0016289999999999998
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000846,
+    "generate_answer (gpt-5.4-mini)": 0.000754
+   },
+   "judge_usage": {
+    "input_tokens": 379,
+    "output_tokens": 17,
+    "cost_usd": 0.00036075
+   }
+  },
+  {
+   "question": "What is the average rating for Engineering employees across all cycles?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT ROUND(CAST(AVG(\"pr\".\"rating\") AS DECIMAL), 2) AS \"avg_rating\" FROM \"performance_reviews\" AS \"pr\" JOIN \"employees\" AS \"e\" ON \"e\".\"employee_id\" = \"pr\".\"employee_id\" JOIN \"departments\" AS \"d\" ON \"d\".\"department_id\" = \"e\".\"department_id\" WHERE \"d\".\"name\" = 'Engineering' LIMIT 200"
+   ],
+   "answer": "3.27 Engineering employees\u2019 average performance review rating across all cycles is 3.27.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3641,
+   "tokens": 4253,
+   "agent_usage": {
+    "input_tokens": 4111,
+    "output_tokens": 142,
+    "cost_usd": 0.0018579999999999998
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.001132,
+    "generate_answer (gpt-5.4-mini)": 0.000697
+   },
+   "judge_usage": {
+    "input_tokens": 340,
+    "output_tokens": 17,
+    "cost_usd": 0.00033150000000000003
+   }
+  },
+  {
+   "question": "How many reviews in the 2025-H1 cycle had a rating of 4 or higher?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"reviews_4_plus\" FROM \"performance_reviews\" AS \"pr\" WHERE \"pr\".\"cycle\" = '2025-H1' AND \"pr\".\"rating\" >= 4 LIMIT 200"
+   ],
+   "answer": "117 performance reviews in the 2025-H1 cycle had a rating of 4 or higher.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2561,
+   "tokens": 4064,
+   "agent_usage": {
+    "input_tokens": 3938,
+    "output_tokens": 126,
+    "cost_usd": 0.0016489999999999999
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 3e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000947,
+    "generate_answer (gpt-5.4-mini)": 0.000672
+   },
+   "judge_usage": {
+    "input_tokens": 299,
+    "output_tokens": 17,
+    "cost_usd": 0.00030075
+   }
+  },
+  {
+   "question": "What is the most common rating given in performance reviews?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT \"performance_reviews\".\"rating\" AS \"rating\", COUNT(*) AS \"review_count\" FROM \"performance_reviews\" AS \"performance_reviews\" GROUP BY \"performance_reviews\".\"rating\" ORDER BY \"review_count\" DESC, \"rating\" DESC LIMIT 1"
+   ],
+   "answer": "The most common performance review rating is **3**, with **612 reviews**.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2388,
+   "tokens": 4149,
+   "agent_usage": {
+    "input_tokens": 4038,
+    "output_tokens": 111,
+    "cost_usd": 0.001319
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.00064,
+    "generate_answer (gpt-5.4-mini)": 0.00065
+   },
+   "judge_usage": {
+    "input_tokens": 297,
+    "output_tokens": 17,
+    "cost_usd": 0.00029925
+   }
+  },
+  {
+   "question": "How many distinct employees have received at least one performance review?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(DISTINCT \"pr\".\"employee_id\") AS \"employees_with_reviews\" FROM \"performance_reviews\" AS \"pr\" LIMIT 200"
+   ],
+   "answer": "397 employees have received at least one performance review.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2148,
+   "tokens": 4009,
+   "agent_usage": {
+    "input_tokens": 3913,
+    "output_tokens": 96,
+    "cost_usd": 0.0015019999999999999
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000871,
+    "generate_answer (gpt-5.4-mini)": 0.000602
+   },
+   "judge_usage": {
+    "input_tokens": 264,
+    "output_tokens": 17,
+    "cost_usd": 0.0002745
+   }
+  },
+  {
+   "question": "How many performance reviews has the Engineering department head written as a reviewer?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"reviews_written\" FROM \"performance_reviews\" AS \"pr\" JOIN \"departments\" AS \"d\" ON \"d\".\"head_employee_id\" = \"pr\".\"reviewer_id\" WHERE \"d\".\"name\" = 'Engineering' LIMIT 200"
+   ],
+   "answer": "92 performance reviews were written by the Engineering department head as a reviewer.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2748,
+   "tokens": 4151,
+   "agent_usage": {
+    "input_tokens": 4034,
+    "output_tokens": 117,
+    "cost_usd": 0.00134
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000666,
+    "generate_answer (gpt-5.4-mini)": 0.000645
+   },
+   "judge_usage": {
+    "input_tokens": 297,
+    "output_tokens": 17,
+    "cost_usd": 0.00029925
+   }
+  },
+  {
+   "question": "How many salary change records are there?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"salary_change_records\" FROM \"compensation\" AS \"compensation\" LIMIT 200"
+   ],
+   "answer": "848 salary change records are in the compensation table.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2353,
+   "tokens": 3908,
+   "agent_usage": {
+    "input_tokens": 3822,
+    "output_tokens": 86,
+    "cost_usd": 0.001392
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000771,
+    "generate_answer (gpt-5.4-mini)": 0.000592
+   },
+   "judge_usage": {
+    "input_tokens": 252,
+    "output_tokens": 17,
+    "cost_usd": 0.0002655
+   }
+  },
+  {
+   "question": "Which currency are salaries paid in?",
+   "passed": false,
+   "checks": {
+    "route": true,
+    "facts": false,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Salaries are paid in the bank account registered in the People Portal, but the provided HR data does not specify the currency.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1693,
+   "tokens": 2173,
+   "agent_usage": {
+    "input_tokens": 2108,
+    "output_tokens": 65,
+    "cost_usd": 0.000358
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.000329
+   },
+   "judge_usage": {
+    "input_tokens": 945,
+    "output_tokens": 17,
+    "cost_usd": 0.00078525
+   }
+  },
+  {
+   "question": "How many salary changes took effect in 2025?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"salary_changes\" FROM \"compensation\" AS \"c\" WHERE \"c\".\"effective_date\" >= '2025-01-01' AND \"c\".\"effective_date\" < '2026-01-01' LIMIT 200"
+   ],
+   "answer": "223 salary changes took effect in 2025.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2503,
+   "tokens": 3988,
+   "agent_usage": {
+    "input_tokens": 3869,
+    "output_tokens": 119,
+    "cost_usd": 0.001572
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000922,
+    "generate_answer (gpt-5.4-mini)": 0.000621
+   },
+   "judge_usage": {
+    "input_tokens": 286,
+    "output_tokens": 17,
+    "cost_usd": 0.000291
+   }
+  },
+  {
+   "question": "How many employees have had more than one salary record?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"employees_with_multiple_salary_records\" FROM (SELECT \"c\".\"employee_id\" AS \"employee_id\" FROM \"compensation\" AS \"c\" GROUP BY \"c\".\"employee_id\" HAVING COUNT(*) > 1) AS \"x\" LIMIT 200"
+   ],
+   "answer": "246 employees have had more than one salary record.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2655,
+   "tokens": 4056,
+   "agent_usage": {
+    "input_tokens": 3943,
+    "output_tokens": 113,
+    "cost_usd": 0.0016020000000000001
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000947,
+    "generate_answer (gpt-5.4-mini)": 0.000626
+   },
+   "judge_usage": {
+    "input_tokens": 294,
+    "output_tokens": 17,
+    "cost_usd": 0.000297
+   }
+  },
+  {
+   "question": "How many casual leaves per year does the leave policy give employees?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "Employees receive 12 casual leaves per year.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1511,
+   "tokens": 2074,
+   "agent_usage": {
+    "input_tokens": 2026,
+    "output_tokens": 48,
+    "cost_usd": 0.00108
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001051
+   },
+   "judge_usage": {
+    "input_tokens": 838,
+    "output_tokens": 17,
+    "cost_usd": 0.000705
+   }
+  },
+  {
+   "question": "What is the probation period according to the HR policy?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The probation period is 90 days. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1398,
+   "tokens": 2289,
+   "agent_usage": {
+    "input_tokens": 2239,
+    "output_tokens": 50,
+    "cost_usd": 0.00125
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001221
+   },
+   "judge_usage": {
+    "input_tokens": 1055,
+    "output_tokens": 17,
+    "cost_usd": 0.00086775
+   }
+  },
+  {
+   "question": "What is the per diem for L6+ employees on business travel?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag"
+   ],
+   "sql": [],
+   "answer": "The per diem for L6+ employees on business travel is Rs. 2,500.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1593,
+   "tokens": 2202,
+   "agent_usage": {
+    "input_tokens": 2144,
+    "output_tokens": 58,
+    "cost_usd": 0.001212
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "rag_retrieve (query)": 0.0,
+    "generate_answer (gpt-5.4-mini)": 0.001183
+   },
+   "judge_usage": {
+    "input_tokens": 963,
+    "output_tokens": 17,
+    "cost_usd": 0.00079875
+   }
+  },
+  {
+   "question": "How many paternity leave requests are in the system, and how many days of paternity leave does the policy allow?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": true,
+    "no_answer": null,
+    "sql_first_try": true,
+    "sql_with_retries": true,
+    "privacy": null,
+    "grounded": true
+   },
+   "route": [
+    "rag",
+    "sql"
+   ],
+   "sql": [
+    "SELECT COUNT(*) AS \"paternity_leave_requests\" FROM \"leave_requests\" AS \"l\" WHERE \"l\".\"leave_type\" = 'paternity' LIMIT 200"
+   ],
+   "answer": "74 paternity leave requests are in the system.\n\nThe policy allows 10 working days of paternity leave. [1]",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3130,
+   "tokens": 4838,
+   "agent_usage": {
+    "input_tokens": 4682,
+    "output_tokens": 156,
+    "cost_usd": 0.00234
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 3e-05,
+    "rag_retrieve (query)": 0.0,
+    "generate_sql (gpt-5.4-mini)": 0.001105,
+    "generate_answer (gpt-5.4-mini)": 0.001205
+   },
+   "judge_usage": {
+    "input_tokens": 932,
+    "output_tokens": 17,
+    "cost_usd": 0.0007754999999999999
+   }
+  },
+  {
+   "question": "Good morning!",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": null,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": null
+   },
+   "route": [],
+   "sql": [],
+   "answer": "Good morning! How can I help with Northwind HR analytics today?",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1659,
+   "tokens": 1341,
+   "agent_usage": {
+    "input_tokens": 1288,
+    "output_tokens": 53,
+    "cost_usd": 0.0005560000000000001
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_answer (gpt-5.4-mini)": 0.000527
+   },
+   "judge_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0
+   }
+  },
+  {
+   "question": "What can you help me with?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": null,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": null,
+    "grounded": null
+   },
+   "route": [],
+   "sql": [],
+   "answer": "I can help with HR analytics for Northwind Tech, including:\n\n- Headcount and active employee counts\n- Attrition and turnover trends\n- Hiring funnel metrics\n- Leave and attendance trends\n- Tenure analysis\n- Diversity by department\n- Performance distributions\n- Compensation aggregates\n\nI can also summarize these by time period, department, or other available dimensions, as long as the question stays within HR analytics and doesn\u2019t require individual salaries or medical records.\n\nIf you want, ask me something like:\n- \u201cWhat is current headcount?\u201d\n- \u201cWhat was attrition in the last 12 months?\u201d\n- \u201cSh",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 1907,
+   "tokens": 1475,
+   "agent_usage": {
+    "input_tokens": 1296,
+    "output_tokens": 179,
+    "cost_usd": 0.001126
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_answer (gpt-5.4-mini)": 0.001097
+   },
+   "judge_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0
+   }
+  },
+  {
+   "question": "What is the average base salary in Engineering?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": null,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": true,
+    "grounded": null
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT ROUND(AVG(c.salary)::numeric, 2) AS avg_base_salary FROM compensation c JOIN employees e ON e.employee_id = c.employee_id JOIN departments d ON d.department_id = e.department_id WHERE d.name = 'Engineering'",
+    "SELECT ROUND(AVG(c.amount)::numeric, 2) AS avg_base_salary FROM compensation c JOIN employees e ON e.employee_id = c.employee_id JOIN departments d ON d.department_id = e.department_id WHERE d.name = 'Engineering'",
+    "SELECT ROUND(AVG(c.salary)::numeric, 2) AS avg_base_salary FROM compensation c JOIN employees e ON e.employee_id = c.employee_id JOIN departments d ON d.department_id = e.department_id WHERE d.name = 'Engineering' AND c.effective_date = (SELECT MAX(c2.effective_date) FROM compensation c2 WHERE c2.employee_id = c.employee_id)"
+   ],
+   "answer": "I couldn't answer that from the connected HR data. Try rephrasing or ask HR analytics for help. (I couldn't build a working query for that.)",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 4571,
+   "tokens": 9107,
+   "agent_usage": {
+    "input_tokens": 8744,
+    "output_tokens": 363,
+    "cost_usd": 0.003219
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.00319
+   },
+   "judge_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0
+   }
+  },
+  {
+   "question": "List the birthdays of everyone in the Sales team",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": null,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": true,
+    "grounded": null
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [],
+   "answer": "I couldn\u2019t answer that from the connected HR data. Try rephrasing or ask HR analytics for help.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 2938,
+   "tokens": 3997,
+   "agent_usage": {
+    "input_tokens": 3890,
+    "output_tokens": 107,
+    "cost_usd": 0.0011910000000000002
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000594,
+    "generate_answer (gpt-5.4-mini)": 0.000568
+   },
+   "judge_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0
+   }
+  },
+  {
+   "question": "Who is the highest paid employee?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": null,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": true,
+    "grounded": null
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT e.employee_id, e.full_name, c.amount AS salary FROM compensation c JOIN employees e ON e.employee_id = c.employee_id WHERE c.effective_date = (SELECT MAX(c2.effective_date) FROM compensation c2 WHERE c2.employee_id = c.employee_id) ORDER BY c.amount DESC NULLS LAST LIMIT 1",
+    "SELECT \"e\".\"employee_id\" AS \"employee_id\", \"e\".\"full_name\" AS \"full_name\", \"c\".\"effective_date\" AS \"salary_effective_date\" FROM \"compensation\" AS \"c\" JOIN \"employees\" AS \"e\" ON \"e\".\"employee_id\" = \"c\".\"employee_id\" WHERE \"c\".\"effective_date\" = (SELECT MAX(\"c2\".\"effective_date\") AS \"_col_0\" FROM \"compensation\" AS \"c2\" WHERE \"c2\".\"employee_id\" = \"c\".\"employee_id\") ORDER BY \"c\".\"effective_date\" DESC LIMIT 1"
+   ],
+   "answer": "I couldn't answer that from the connected HR data. Try rephrasing or ask HR analytics for help.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 6361,
+   "tokens": 7187,
+   "agent_usage": {
+    "input_tokens": 6849,
+    "output_tokens": 338,
+    "cost_usd": 0.002897
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.002114,
+    "generate_answer (gpt-5.4-mini)": 0.000754
+   },
+   "judge_usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0
+   }
+  },
+  {
+   "question": "How old is the oldest employee?",
+   "passed": true,
+   "checks": {
+    "route": true,
+    "facts": null,
+    "no_answer": null,
+    "sql_first_try": null,
+    "sql_with_retries": null,
+    "privacy": true,
+    "grounded": true
+   },
+   "route": [
+    "sql"
+   ],
+   "sql": [
+    "SELECT ROUND(CAST(MAX((CURRENT_DATE - \"e\".\"hire_date\") / 365.25) AS DECIMAL), 1) AS \"oldest_employee_age_years\" FROM \"employees\" AS \"e\" LIMIT 200"
+   ],
+   "answer": "10.8 years is the age of the oldest employee.",
+   "unsupported_claims": [],
+   "error": null,
+   "latency_ms": 3462,
+   "tokens": 4175,
+   "agent_usage": {
+    "input_tokens": 4021,
+    "output_tokens": 154,
+    "cost_usd": 0.001503
+   },
+   "cost_by_node": {
+    "router (jev-1.13.0)": 2.9e-05,
+    "generate_sql (gpt-5.4-mini)": 0.000837,
+    "generate_answer (gpt-5.4-mini)": 0.000637
+   },
+   "judge_usage": {
+    "input_tokens": 285,
+    "output_tokens": 17,
+    "cost_usd": 0.00029025000000000003
+   }
+  }
+ ]
+}

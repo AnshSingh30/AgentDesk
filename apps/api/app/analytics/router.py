@@ -87,7 +87,12 @@ async def overview(
         await session.execute(
             select(func.count())
             .select_from(Conversation)
-            .where(Conversation.last_message_at >= start, Conversation.last_message_at < end, *conv_filter)
+            .where(
+                Conversation.last_message_at >= start,
+                Conversation.last_message_at < end,
+                Conversation.message_count > 0,
+                *conv_filter,
+            )
         )
     ).scalar_one()
     sql_ok = (

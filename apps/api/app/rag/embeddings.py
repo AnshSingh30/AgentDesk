@@ -114,7 +114,11 @@ async def _embed_uncached(texts: list[str], model: str, api_key: str | None) -> 
         for attempt in range(3):
             try:
                 resp = await litellm.aembedding(
-                    model=model, input=chunk, api_key=api_key or settings.openai_api_key, timeout=60
+                    model=model,
+                    input=chunk,
+                    api_key=api_key or settings.openai_api_key or "sk-no-key",
+                    api_base=settings.embedding_api_base if model.startswith("openai/") else None,
+                    timeout=60,
                 )
                 vectors.extend([d["embedding"] for d in resp.data])
                 break

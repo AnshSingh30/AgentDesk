@@ -165,6 +165,9 @@ export default function BuilderPage() {
               <MessageSquare /> Test
             </Button>
             <Button variant="outline" size="sm" asChild>
+              <Link href={`${base}/annotations`}>Annotations</Link>
+            </Button>
+            <Button variant="outline" size="sm" asChild>
               <Link href={`${base}/playground`}>Open Playground</Link>
             </Button>
             <Button size="sm" onClick={() => setPublishOpen(true)}>

@@ -1,6 +1,6 @@
-name: Nightly evals
+name: Evals
+# Manual only: live evals need model API keys in repo secrets (EVAL_CHAT_MODEL var + provider key).
 on:
-  schedule: [{ cron: "30 1 * * *" }]
   workflow_dispatch:
 jobs:
   evals:
@@ -18,7 +18,9 @@ jobs:
       QDRANT_URL: http://localhost:6333
       S3_ENDPOINT: http://localhost:9000
       ALLOW_PRIVATE_ENDPOINTS: "true"
+      AGENTDESK_LIVE: "1"
       DEFAULT_CHAT_MODEL: ${{ vars.EVAL_CHAT_MODEL || 'fake/chat' }}
+      EVAL_JUDGE_MODEL: ${{ vars.EVAL_JUDGE_MODEL }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       LANGSMITH_API_KEY: ${{ secrets.LANGSMITH_API_KEY }}
@@ -33,4 +35,8 @@ jobs:
       - run: uv run pytest -q tests/evals -s --junitxml=evals.xml
       - uses: actions/upload-artifact@v4
         if: always()
-        with: { name: eval-results, path: apps/api/evals.xml }
+        with:
+          name: eval-results
+          path: |
+            apps/api/evals.xml
+            apps/api/tests/evals/reports/

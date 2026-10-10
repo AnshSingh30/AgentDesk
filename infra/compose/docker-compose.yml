@@ -67,6 +67,21 @@ services:
       retries: 20
     restart: unless-stopped
 
+  # Local embedding server (OpenAI-compatible /v1/embeddings). Use with
+  # DEFAULT_EMBEDDING_MODEL=openai/BAAI/bge-base-en-v1.5 and EMBEDDING_API_BASE=http://localhost:8082/v1
+  embeddings:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.9
+    profiles: [dev, prod]
+    command: ["--model-id", "${EMBEDDING_MODEL_ID:-BAAI/bge-base-en-v1.5}", "--port", "80"]
+    ports: ["${EMBEDDINGS_PORT:-8082}:80"]
+    volumes: [embeddingsdata:/data]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://127.0.0.1:80/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
   mailpit:
     image: axllent/mailpit:latest
     profiles: [dev]
@@ -200,5 +215,6 @@ volumes:
   qdrantdata:
   miniodata:
   hrdemodata:
+  embeddingsdata:
   caddydata:
   caddyconfig:

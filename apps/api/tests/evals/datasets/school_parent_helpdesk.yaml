@@ -1,0 +1,36 @@
+# School Parent Helpdesk eval set (seeded agent: KB only, English + Hinglish).
+cases:
+  - { question: "When is the last date for Q3 fee payment?", expected_route: [rag], expected_facts: [["15 december", "december 15", "15th december", "15 dec"]] }
+  - { question: "What are school timings for class 5?", expected_route: [rag], expected_facts: ["8:00"] }
+  - { question: "Kal school khula hai kya 2 October ko?", expected_route: [rag], expected_facts: [["closed", "band", "nahi", "बंद"]] }
+  - { question: "Which bus route covers Gomti Nagar?", expected_route: [rag], expected_facts: ["route 3"] }
+  - { question: "What is my son's attendance this month?", expected_route: [rag], expected_facts: [["class teacher", "front office", "parent app"]] }
+  - { question: "What are the timings for nursery?", expected_route: [rag], expected_facts: ["8:30"] }
+  - { question: "What time does school start for class 8?", expected_route: [rag], expected_facts: ["7:45"] }
+  - { question: "Which Saturdays do classes 1 to 5 have school?", expected_route: [rag], expected_facts: [["1st", "first"], ["3rd", "third"]] }
+  - { question: "How much is the late fee if I pay after the due date?", expected_route: [rag], expected_facts: ["50"] }
+  - { question: "What is the total annual fee for class 3?", expected_route: [rag], expected_facts: [["75,000", "75000"]] }
+  - { question: "What is the total fee for class 10?", expected_route: [rag], expected_facts: [["1,01,000", "101,000", "101000"]] }
+  - { question: "How much is the admission fee?", expected_route: [rag], expected_facts: [["25,000", "25000"]] }
+  - { question: "Is the caution deposit refundable and how much is it?", expected_route: [rag], expected_facts: [["10,000", "10000"], "refundable"] }
+  - { question: "What documents are needed for admission to class 1?", expected_route: [rag], expected_facts: ["birth certificate"] }
+  - { question: "What is the minimum age for class 1 admission?", expected_route: [rag], expected_facts: [["5 years 6 months", "5 years and 6 months", "5.5", "five and a half", "5½"]] }
+  - { question: "What are the accounts office hours?", expected_route: [rag], expected_facts: [["9:00", "9 am", "9am"]] }
+  - { question: "What is the email for fee queries?", expected_route: [rag], expected_facts: ["accounts@greenwood.example"] }
+  - { question: "What is the transport in-charge's phone number?", expected_route: [rag], expected_facts: ["98390-00123"] }
+  - { question: "Which areas does bus route 1 cover?", expected_route: [rag], expected_facts: ["hazratganj"] }
+  - { question: "What is the quarterly bus fee for Gomti Nagar?", expected_route: [rag], expected_facts: [["6,000", "6000"]] }
+  - { question: "When does winter vacation start?", expected_route: [rag], expected_facts: [["24 december", "december 24", "24th december", "24 dec"]] }
+  - { question: "When are the term 1 exams?", expected_route: [rag], expected_facts: ["14", "25"] }
+  - { question: "When is the annual sports day?", expected_route: [rag], expected_facts: [["12 december", "december 12", "12th december", "12 dec"]] }
+  - { question: "When are parent-teacher meetings held?", expected_route: [rag], expected_facts: [["second saturday", "2nd saturday"]] }
+  - { question: "What is the minimum attendance required for final exams?", expected_route: [rag], expected_facts: ["75%"] }
+  - { question: "On which days is the sports uniform worn?", expected_route: [rag], expected_facts: ["wednesday", "saturday"] }
+  - { question: "Where can I buy the school uniform?", expected_route: [rag], expected_facts: ["gate 2"] }
+  - { question: "Who do I call in an emergency during school hours?", expected_route: [rag], expected_facts: ["0522-400-1000"] }
+  - { question: "What time is the school nurse available from?", expected_route: [rag], expected_facts: ["7:30"] }
+  - { question: "Q3 ki fees kab tak jama karni hai?", expected_route: [rag], expected_facts: ["15"] }
+  - { question: "Bus route 5 kaunse area cover karta hai?", expected_route: [rag], expected_facts: ["sushant golf city"] }
+  # ---- must not guess
+  - { question: "What is the name of the school's cricket coach?", expected_no_answer: true }
+  - { question: "Can you help me file my income tax return?", expected_no_answer: true }

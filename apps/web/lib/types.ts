@@ -99,6 +99,7 @@ export interface AgentConfig {
     };
   };
   memory: { max_turns: number; history_token_budget: number; session_timeout_minutes: number };
+  annotations?: { enabled: boolean; threshold: number };
   meta?: Record<string, unknown>;
 }
 

@@ -89,6 +89,7 @@ async def list_conversations(
     session: AsyncSession = Depends(get_db),
 ) -> dict[str, Any]:
     stmt = _apply_filters(scoped(Conversation, ctx.org_id), agent_id, deployment_id, channel, flag, from_, to)
+    stmt = stmt.where(Conversation.message_count > 0)  # opening the Playground creates an empty session
     rows, next_cursor = await keyset_page(session, stmt, Conversation, limit, cursor)
     mask = not ctx.has_role("editor")
     return {"items": [await _conv_out(session, c, mask) for c in rows], "next_cursor": next_cursor}
