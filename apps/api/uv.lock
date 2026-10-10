@@ -2749,7 +2749,7 @@ wheels = [
 
 [[package]]
 name = "unstructured"
-version = "0.27.6"
+version = "0.27.16"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "beautifulsoup4" },
@@ -2777,9 +2777,9 @@ dependencies = [
     { name = "unstructured-client" },
     { name = "wrapt" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/aa/49/e781ad02c6ca058258c9e3ed9a792a566ca7c6bf3b559a31b4e198a569e0/unstructured-0.27.6.tar.gz", hash = "sha256:8a5c4c04f4eb815989703492ce3a79260a1036cef31b6dc6e93591dda6065f5e", size = 1567321, upload-time = "2026-09-14T16:28:45.291Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ff/95/2c0e3ddb8bb04782719c2d585d9fb6e7a2259b52fa820d5b1d9c63efac2d/unstructured-0.27.16.tar.gz", hash = "sha256:8ba01619d5eb9e712e542088a4d74a291758f9f4060f73906111e68a22dce0f8", size = 1590685, upload-time = "2026-10-05T22:34:42.31Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a4/85/f5a5d38962a07f7e1aac8da1f941806f74e6a74ffe65d3b45fff9f579e14/unstructured-0.27.6-py3-none-any.whl", hash = "sha256:0f4b328dfab72d1a1d87bfdc9b452d62a9934641faaf4a543aaf926834362e84", size = 1627356, upload-time = "2026-09-14T16:28:43.4Z" },
+    { url = "https://files.pythonhosted.org/packages/5c/0b/cd2b09e4e8c07c691cd6a2a81e95cdf2c427fb4bed99a41c8ea20467726e/unstructured-0.27.16-py3-none-any.whl", hash = "sha256:d395887924369733f7fcdfddc3260a2f2319095a347e167fc17d9cc6328a6de2", size = 1651433, upload-time = "2026-10-05T22:34:39.848Z" },
 ]
 
 [[package]]
