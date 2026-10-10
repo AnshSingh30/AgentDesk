@@ -32,5 +32,5 @@ jobs:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
       - run: git log --pretty='- %s (%h)' $(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD > CHANGELOG_RELEASE.md
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with: { body_path: CHANGELOG_RELEASE.md }
